@@ -39,6 +39,9 @@
 	 get_engine_driver/1
 	]).
 
+%% Conditionally used functions (export to avoid warning)
+-export([register_builtin_engine/3]).
+
 %% Handshake and other TLS operations.
 -export([
 	 connect/4,

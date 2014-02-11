@@ -365,7 +365,7 @@ is_success(IQ) when ?IS_IQ(IQ) ->
 digest(ID, Passwd) ->
     Token = ID ++ Passwd,
     crypto:start(),
-    binary_to_list(crypto:sha(Token)).
+    binary_to_list(crypto:hash(sha, Token)).
 
 %% @spec (Plain) -> Hex
 %%     Plain = string()

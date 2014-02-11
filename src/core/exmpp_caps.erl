@@ -218,6 +218,6 @@ identities(_) ->
 -spec(hash_caps/1 :: (string()) -> hash()).
 
 hash_caps(String) when is_list(String)->
-    base64:encode(crypto:sha(unicode:characters_to_list(String)));
+    base64:encode(crypto:hash(sha, unicode:characters_to_list(String)));
 hash_caps(_) ->
     throw({exmpp_caps, hash_caps, 'String : string()'}).
