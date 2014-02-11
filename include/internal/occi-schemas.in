@@ -7,3 +7,8 @@ URL:		http://redmine.ogf.org/projects/occi-wg/repository/revisions/xml-data-form
 XEP:		TBD2
 NAME:		XMLSchema schema
 URL:		http://www.w3.org/2001/XMLSchema.xsd
+
+# --------------------------------------------------------------------
+XEP:		TBD3
+NAME:		XLink schema
+URL:		http://www.w3.org/XML/2008/06/xlink.xsd
