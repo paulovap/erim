@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,12 +13,14 @@
 %% under the License.
 
 %% @author Jean-Sébastien Pédron <js.pedron@meetic-corp.com>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> provides functions to handle
 %% server dialback method.
 
 -module(exmpp_dialback).
+-compile({parse_transform, lager_transform}).
 
 -include("exmpp.hrl").
 

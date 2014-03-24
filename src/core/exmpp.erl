@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,6 +13,7 @@
 %% under the License.
 
 %% @author Jean-Sébastien Pédron <js.pedron@meetic-corp.com>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> provides callbacks for
@@ -23,6 +25,7 @@
 %% </p>
 
 -module(exmpp).
+-compile({parse_transform, lager_transform}).
 
 -behaviour(application).
 
@@ -47,6 +50,7 @@
 %% @doc Start applications which exmpp depends on then start exmpp.
 
 start() ->
+    application:start(lager),
     application:start(exmpp).
 
 %% @spec () -> Version
@@ -74,9 +78,9 @@ stop(_State) ->
 %% @hidden
 
 config_change(Changed, New, Removed) ->
-    error_logger:info_msg("Config change:~n"
-			  "Changed: ~p~n"
-			  "New: ~p~n"
-			  "Removed: ~p~n",
-			  [Changed, New, Removed]),
+    lager:error("Config change:~n"
+		"Changed: ~p~n"
+		"New: ~p~n"
+		"Removed: ~p~n",
+		[Changed, New, Removed]),
     ok.

@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,6 +13,7 @@
 %% under the License.
 
 %% @author Mickael Remond <mickael.remond@process-one.net>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> manages XMPP over HTTP connection
@@ -27,6 +29,7 @@
 %% http://bitbucket.org/etc/lhttpc/src/tip/LICENCE
 
 -module(exmpp_bosh).
+-compile({parse_transform, lager_transform}).
 
 %-include_lib("exmpp/include/exmpp.hrl").
 -include("exmpp.hrl").
@@ -185,13 +188,13 @@ handle_info({tcp_closed, Socket}, State = #state{open = Open, free = Free}) ->
         end;                                                                    
 
 handle_info(_Info, State) ->
-    error_logger:error_report([{unknown_info_in_bosh, _Info}]),
+    lager:error("unknown_info_in_bosh: ~p~n", [_Info]),
     {stop, _Info, State}.                                      
 terminate(_Reason, #state{open = Open}) when is_list(Open) ->  
     lists:map(fun({Socket, _}) -> gen_tcp:close(Socket) end, Open),
-    ok;                                                            
+    ok;
 terminate(_Reason, #state{}) ->                                    
-    ok.                                                            
+    ok.
 code_change(_Old, State, _Extra) ->                                
     {ok, State}.                                                   
 

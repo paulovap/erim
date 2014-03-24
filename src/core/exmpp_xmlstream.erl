@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,6 +13,7 @@
 %% under the License.
 
 %% @author Jean-Sébastien Pédron <js.pedron@meetic-corp.com>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> sends events to a specified
@@ -30,6 +32,7 @@
 %% </ul>
 
 -module(exmpp_xmlstream).
+-compile({parse_transform, lager_transform}).
 
 -include("exmpp.hrl").
 
@@ -313,7 +316,7 @@ send_events(#xml_stream{callback = {apply, {M, F, Extra}}} = Stream,
 send_events(#xml_stream{callback = no_callback} = Stream, Events) ->
     {ok, Stream, Events};
 send_events(Stream, [Event | Rest]) ->
-    error_logger:info_msg("~s:send_event/2: Event: ~p~n", [?MODULE, Event]),
+    lager:info("~s:send_event/2: Event: ~p~n", [?MODULE, Event]),
     send_events(Stream, Rest);
 send_events(Stream, []) ->
     {ok, Stream}.
@@ -430,7 +433,7 @@ set_wrapper_tagnames(Stream, TagNames) when is_list(TagNames) ->
 %%
 %% If the callback() doesn't match any of these specifications
 %% (the `Log' case), the event will be logged with
-%% {@link error_logger:info_msg/2}.
+%% {@link lager:info/2}.
 
 %% @type xmlstream().
 %% Handler for the opened stream, initialized with a call to {@link

@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,6 +13,7 @@
 %% under the License.
 
 %% @author Emilio Bustos <emilionicolas@gmail.com>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> manages TCP/IP socket
@@ -22,6 +24,7 @@
 %% </p>
 
 -module(exmpp_socket).
+-compile({parse_transform, lager_transform}).
 
 -export([connect/3, send/2, close/2, reset_parser/1, get_property/2,
         compress/1, starttls/2, wping/1
@@ -29,7 +32,6 @@
 
 %% Internal export
 -export([receiver/3]).
-
 
 % None implemented so far.
 get_property(_Socket, _Prop) ->
@@ -47,13 +49,13 @@ connect(ClientPid, StreamRef, {Host, Port, Options}) ->
     LocalIP = proplists:get_value(local_ip, Options, undefined),                     
     LocalPort= proplists:get_value(local_port, Options, undefined),                  
     SckType = proplists:get_value(socket_type, Options, gen_tcp),                  
-    IPOptions = case LocalIP of                                                                                          
-                        undefined -> [];                                           
-                        _ ->  case LocalPort of                                                                        
-                                undefined -> [{ip, LocalIP}];                     
-                                _ -> [{ip, LocalIP}, {port, LocalPort()}]         
-                              end                                                                                      
-                end,                                                                                                   
+    IPOptions = case LocalIP of
+		    undefined -> [];
+		    _ ->  case LocalPort of                                                                        
+			      undefined -> [{ip, LocalIP}];                     
+			      _ -> [{ip, LocalIP}, {port, LocalPort()}]         
+			  end                                                                                      
+                end,
     DefaultOptions = [{packet,0}, binary, {active, false}] ++ IPOptions,
     Opts = [{reuseaddr,true}|DefaultOptions],
     case SckType:connect(Host, Port, Opts, 30000) of
@@ -142,7 +144,7 @@ receiver_loop(ClientPid, ESocket, StreamRef) ->
 	{ssl_closed, Socket} ->
 	    gen_fsm:send_all_state_event(ClientPid, tcp_closed);
 	{ssl_error,Socket,Reason} ->
-	    error_logger:warning_msg([ssl_error,{ssl_socket,Socket},Reason]),
+	    lager:warning("ssl_error,~p: ~p~n", [Socket,Reason]),
 	    gen_fsm:send_all_state_event(ClientPid, tcp_closed);
         reset_parser ->
             receiver_loop(ClientPid, ESocket, exmpp_xmlstream:reset(StreamRef))

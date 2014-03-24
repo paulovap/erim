@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,6 +13,7 @@
 %% under the License.
 
 %% @author Jean-Sébastien Pédron <js.pedron@meetic-corp.com>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> provides functions to use
@@ -22,6 +24,7 @@
 %% </p>
 
 -module(exmpp_stringprep).
+-compile({parse_transform, lager_transform}).
 
 -behaviour(gen_server).
 
@@ -351,29 +354,29 @@ init([]) ->
 %% @hidden
 
 handle_call(Request, From, State) ->
-    error_logger:info_msg("~p:handle_call/3:~n- Request: ~p~n- From: ~p~n"
-			  "- State: ~p~n", [?MODULE, Request, From, State]),
+    lager:info("~p:handle_call/3:~n- Request: ~p~n- From: ~p~n"
+	       "- State: ~p~n", [?MODULE, Request, From, State]),
     {reply, ok, State}.
 
 %% @hidden
 
 handle_cast(Request, State) ->
-    error_logger:info_msg("~p:handle_cast/2:~n- Request: ~p~n"
-			  "- State: ~p~n", [?MODULE, Request, State]),
+    lager:info("~p:handle_cast/2:~n- Request: ~p~n"
+	       "- State: ~p~n", [?MODULE, Request, State]),
     {noreply, State}.
 
 %% @hidden
 
 handle_info(Info, State) ->
-    error_logger:info_msg("~p:handle_info/2:~n- Info: ~p~n"
-			  "- State: ~p~n", [?MODULE, Info, State]),
+    lager:info("~p:handle_info/2:~n- Info: ~p~n"
+	       "- State: ~p~n", [?MODULE, Info, State]),
     {noreply, State}.
 
 %% @hidden
 
 code_change(Old_Vsn, State, Extra) ->
-    error_logger:info_msg("~p:code_change/3:~n- Old_Vsn: ~p~n- Extra: ~p~n"
-			  "- State: ~p~n", [?MODULE, Old_Vsn, Extra, State]),
+    lager:info("~p:code_change/3:~n- Old_Vsn: ~p~n- Extra: ~p~n"
+	       "- State: ~p~n", [?MODULE, Old_Vsn, Extra, State]),
     {ok, State}.
 
 %% @hidden
