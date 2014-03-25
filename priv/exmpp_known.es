@@ -3,18 +3,18 @@
 
 main([ Type, In ]) ->
     Erl = srcfile(In),
-    case uptodate(In, Erl) of
+    case uptodate(In, filename:join([basedir(), Erl])) of
 	true -> ok;
 	false -> 
 	    io:format("Generated ~s~n", [Erl]),
-	    generate(erl, Type, read(In), Erl)
+	    generate(erl, Type, read(In), filename:join([basedir(), Erl]))
     end,
     Hrl = hrlfile(In),
-    case uptodate(In, Hrl) of
+    case uptodate(In, filename:join([basedir(), Hrl])) of
 	true -> ok;
 	false -> 
 	    io:format("Generated ~s~n", [Hrl]),
-	    generate(hrl, Type, read(In), Hrl)
+	    generate(hrl, Type, read(In), filename:join([basedir(), Hrl]))
     end;
 main(_) ->
     io:format(usage()).
@@ -55,10 +55,10 @@ write(Str, Outfile) ->
 terms_to_erl(Mod, Fun, Terms) ->
     S = [ io_lib:format("-module(~s).~n"
 			"-export([~s/1]).~n~n", [Mod, Fun]) ],
-    S2 = lists:foldl(fun (NSbin, Acc) ->
-			     NS = to_atom(NSbin),
-			     [ io_lib:format("~s('~s') -> \"~s\";~n", [Fun, NS, NS]) | Acc ]
-		     end, S, Terms),
+    S2 = sets:fold(fun (NSbin, Acc) ->
+			   NS = to_atom(NSbin),
+			   [ io_lib:format("~s('~s') -> \"~s\";~n", [Fun, NS, NS]) | Acc ]
+		   end, S, Terms),
     S3 = [ io_lib:format("~s(undefined) -> \"\";~n", [Fun]) | S2 ],
     S4 = [ io_lib:format("~s(A) when is_atom(A) -> atom_to_list(A);~n", [Fun]) | S3 ],
     S5 = [ io_lib:format("~s(S) when is_list(S) -> S.~n~n", [Fun]) | S4 ],
@@ -67,30 +67,30 @@ terms_to_erl(Mod, Fun, Terms) ->
 terms_to_hrl(Def, Terms) ->
     io_lib:format("-define(~s,~n"
 		  "        ~p).~n~n",
-		  [ Def, [ to_atom(Term) || Term <- Terms ] ]).
+		  [ Def, [ to_atom(Term) || Term <- sets:to_list(Terms) ] ]).
 
 read(Src) ->
     {ok, Bin} = file:read_file(Src),
-    read_line(Bin, <<>>, []).
+    read_line(Bin, <<>>, sets:new()).
 
-read_line(<<>>, _, L) ->
-    L;
-read_line(<< $#, Rest/bits >>, A, L) ->
-    read_comment(Rest, A, L);
-read_line(<< $\n, Rest/bits >>, <<>>, L) ->
-    read_line(Rest, <<>>, L);
-read_line(<< C, Rest/bits >>, A, L) ->
+read_line(<<>>, _, T) ->
+    T;
+read_line(<< $#, Rest/bits >>, <<>>, T) ->
+    read_comment(Rest, <<>>, T);
+read_line(<< $\n, Rest/bits >>, <<>>, T) ->
+    read_line(Rest, <<>>, T);
+read_line(<< C, Rest/bits >>, A, T) ->
     case C of
-	$\n -> read_line(Rest, <<>>, [ A | L ]);
-	$\s -> read_line(Rest, A, L);
-	$\t -> read_line(Rest, A, L);
-	C -> read_line(Rest, << A/binary, C >>, L)
+	$\n -> read_line(Rest, <<>>, sets:add_element(A, T));
+	$\s -> read_line(Rest, A, T);
+	$\t -> read_line(Rest, A, T);
+	C -> read_line(Rest, << A/binary, C >>, T)
     end.
 
-read_comment(<< $\n, Rest/bits >>, A, L) ->
-    read_line(Rest, A, L);
-read_comment(<< _, Rest/bits >>, A, L) ->
-    read_comment(Rest, A, L).
+read_comment(<< $\n, Rest/bits >>, A, T) ->
+    read_line(Rest, A, T);
+read_comment(<< _, Rest/bits >>, A, T) ->
+    read_comment(Rest, A, T).
 
 time_to_str(Time) ->
     {{Y,Mo,D},{H,M,S}} = calendar:now_to_datetime(Time),
@@ -100,10 +100,10 @@ basedir() ->
     filename:join([filename:dirname(escript:script_name()), ".."]).
 
 includedir() ->
-    filename:join([basedir(), "include", "internal"]).
+    filename:join(["include", "internal"]).
 
 srcdir() ->
-    filename:join(basedir(), "src").
+    "src".
 
 hrlfile(File) ->
     filename:join([includedir(), filename:basename(File, ".in")]) ++ ".hrl".
