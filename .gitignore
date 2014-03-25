@@ -1,6 +1,5 @@
 *~
 c_src/*.o
-priv/*
 */Emakefile
 *Makefile
 *Makefile.in
@@ -34,3 +33,4 @@ src/exmpp_known_nss.erl
 stamp-h1
 testsuite/etest
 deps/
+/priv/lib/*.so
