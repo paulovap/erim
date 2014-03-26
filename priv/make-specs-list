@@ -12,7 +12,8 @@ our $SPECS_URL = 'http://xmpp.org/xmpp-protocols/xmpp-extensions/';
 
 # OR'd regex.
 our $TYPE_EXCL1 = qr/(Humorous|JIG Formation|Procedural)/io;
-our $STATUS_EXCL1 = qr/(Deferred|Obsolete|Rejected|Retracted|Draft|Experimental)/io;
+#our $STATUS_EXCL1 = qr/(Deferred|Obsolete|Rejected|Retracted|Draft|Experimental)/io;
+our $STATUS_EXCL1 = qr/(Deferred|Obsolete|Rejected|Retracted|Experimental)/io;
 
 # AND'd regex.
 our $TYPE_EXCL2 = qr/(Informational)/io;
