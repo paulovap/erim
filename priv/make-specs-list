@@ -12,8 +12,7 @@ our $SPECS_URL = 'http://xmpp.org/xmpp-protocols/xmpp-extensions/';
 
 # OR'd regex.
 our $TYPE_EXCL1 = qr/(Humorous|JIG Formation|Procedural)/io;
-#our $STATUS_EXCL1 = qr/(Deferred|Obsolete|Rejected|Retracted|Draft|Experimental)/io;
-our $STATUS_EXCL1 = qr/(Deferred|Obsolete|Rejected|Retracted|Experimental)/io;
+our $STATUS_EXCL1 = qr/(Deferred|Obsolete|Rejected|Retracted|Draft|Experimental)/io;
 
 # AND'd regex.
 our $TYPE_EXCL2 = qr/(Informational)/io;
@@ -34,7 +33,17 @@ our @RFCS = (
 		'id'   => 'RFC 3923',
 		'url'  => 'http://www.xmpp.org/rfcs/rfc3923.html',
 		'name' => 'XMPP End-to-End Signing and Object Encryption'
-	}
+	},
+    {
+	'id'   => 'RFC 0060',
+	'url'  => 'http://xmpp.org/extensions/xep-0060.html',
+	'name' => 'Publish-Subscribe'
+    },
+    {
+	'id'   => 'RFC 0115',
+	'url'  => 'http://xmpp.org/extensions/xep-0115.html',
+	'name' => 'Entity Capabilities'
+    }
 );
 sub main {
 	my ($specs_url) = @_;
