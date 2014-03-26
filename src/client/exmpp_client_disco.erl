@@ -16,6 +16,7 @@
 -module(exmpp_client_disco).
 
 -include("exmpp.hrl").
+-include("exmpp_jid.hrl").
 
 -define(QUERY_INFO,
   #xmlel{ns = ?NS_DISCO_INFO, name = 'query'}
@@ -34,9 +35,12 @@
 	]).
 
 %% @spec (To) -> Iq
-%%     To = string()
+%%     To = string() | jid()
 %%     Iq = exmpp_xml:xmlel()
 %% @doc Make an <iq/> for a disco#info
+
+info(#jid{raw=To}) ->
+    info(To);
 
 info(To) ->
   Query = ?QUERY_INFO,
@@ -44,11 +48,13 @@ info(To) ->
   exmpp_xml:append_child(Iq, Query).
 
 %% @spec (To, Node) -> Iq
-%%     To   = string()
+%%     To   = string() | jid()
 %%     Node = string()
 %%     Iq   = exmpp_xml:xmlel()
 %% @doc Make an <iq/> for a disco#info to a node
 
+info(#jid{raw=To}, Node) ->
+    info(To, Node);
 info(To, Node) ->
   Query = exmpp_xml:set_attribute(?QUERY_INFO, <<"node">>, Node),
   Iq = ?IQ_GET(To, iq_id()),
