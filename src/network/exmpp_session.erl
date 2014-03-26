@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,6 +13,7 @@
 %% under the License.
 
 %% @author Mickael Remond <mickael.remond@process-one.net>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> puts together the mechanism
@@ -55,6 +57,8 @@
 %%
 
 -module(exmpp_session).
+-compile({parse_transform, lager_transform}).
+
 -behaviour(gen_fsm).
 
 %% XMPP Session API:
@@ -380,7 +384,9 @@ login(Session, Method, Timeout) when is_pid(Session), is_atom(Method) ->
 %% Send any exmpp formatted packet
 send_packet(Session, Packet) when is_pid(Session) ->
     case gen_fsm:sync_send_event(Session, {send_packet, Packet}) of
-	Error when is_tuple(Error) -> erlang:throw(Error);
+	Error when is_tuple(Error) -> 
+	    lager:error("send packet failed: ~p~n", [Error]),
+	    erlang:throw(Error);
         Id -> Id
     end.
 
