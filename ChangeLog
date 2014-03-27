@@ -1,0 +1,6 @@
+0.1  Jean Parpaillon  <jean.parpaillon@free.fr>
+
+	* Initial release for erim (based on exmpp 0.9.9)
+	* Migrate to lager for logging
+	* Migrate to rebar for compilation, dependancies management
+	* Migrate to escripts for specs parsing and code generation

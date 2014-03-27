@@ -1,5 +1,10 @@
 #!/bin/sh
-
+#
+# Update the list of XMPP specs from xmpp.org website.
+#
+# Copyright (c) 2014 Jean Parpaillon
+# Author(s): Jean Parpaillon <jean.parpaillon@free.fr>
+#
 basedir=$(dirname $0)
 privdir=${basedir}/priv
 hdrdir=${basedir}/include/internal
