@@ -1,4 +1,4 @@
-0.1  Jean Parpaillon  <jean.parpaillon@free.fr>
+0.10  Jean Parpaillon  <jean.parpaillon@free.fr>
 
 	* Initial release for erim (based on exmpp 0.9.9)
 	* Migrate to lager for logging

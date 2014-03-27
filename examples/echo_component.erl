@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -12,6 +13,7 @@
 %% under the License.
 
 %% @author Ery Lee<ery.lee@gmail.com>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> implements a echo component.
@@ -27,8 +29,8 @@
 %% echo_component:stop(Session).</pre>
 -module(echo_component).
 
--include_lib("exmpp/include/exmpp.hrl").
--include_lib("exmpp/include/exmpp_client.hrl").
+-include_lib("erim/include/exmpp.hrl").
+-include_lib("erim/include/exmpp_client.hrl").
 
 -export([start/0, stop/1]).
 -export([init/0]).
