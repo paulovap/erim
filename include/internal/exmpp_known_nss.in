@@ -262,3 +262,18 @@ urn:xmpp:time
 # DATE:		2009-09-15
 
 urn:xmpp:delay
+# NAME:              custom
+# URL:               occi.xsd
+
+http://schemas.ogf.org/occi
+
+# NAME:              custom
+# URL:               XMLSchema.xsd
+
+http://www.w3.org/2001/XMLSchema
+
+# NAME:              custom
+# URL:               xlink.xsd
+
+http://www.w3.org/1999/xlink
+
