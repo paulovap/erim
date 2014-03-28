@@ -13,7 +13,7 @@ known_nss_src=exmpp_known_nss.in
 known_elems_src=exmpp_known_elems.in
 known_attrs_src=exmpp_known_attrs.in
 
-( ${privdir}/make-specs-list; cat ${privdir}/occi-schemas.in ) \
+${privdir}/make-specs-list \
     | ${privdir}/extract-known-from-specs \
 		${hdrdir}/${known_nss_src} \
 		${hdrdir}/${known_elems_src} \
