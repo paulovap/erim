@@ -12,9 +12,6 @@ c_src/*.la
 c_src/*.lo
 config.*
 configure
-doc/edoc-info
-doc/erlang.png
-doc/*.html
 ebin/exmpp.app
 ebin/exmpp.appup
 ebin/*.beam
@@ -35,3 +32,4 @@ testsuite/etest
 deps/
 /priv/lib/*.so
 ebin/erim.app
+/doc
