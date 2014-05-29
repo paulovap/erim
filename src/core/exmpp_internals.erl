@@ -12,12 +12,16 @@
 %% under the License.
 
 %% @author Jean-Sebastien Pedron <js.pedron@meetic-corp.com>
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 
 %% @doc
 %% The module <strong>{@module}</strong> provides internal functions for
 %% other modules.
 
 -module(exmpp_internals).
+
+%% Loadable modules handling.
+-export([is_module/1]).
 
 %% Port driver handling.
 -export([
@@ -40,6 +44,19 @@
 	 gen_controlling_process/2,
 	 gen_close/1
 	]).
+
+
+%% --------------------------------------------------------------------
+%% Loadable module handling.
+%% --------------------------------------------------------------------
+
+is_module(Mod) when is_atom(Mod) ->
+    try Mod:module_info() of
+	_ -> true
+    catch _:_ -> false
+    end;
+is_module(_) -> 
+    false.
 
 %% --------------------------------------------------------------------
 %% Port driver loading/unloading.

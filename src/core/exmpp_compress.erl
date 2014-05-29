@@ -33,7 +33,6 @@
 %% Registry handling.
 -export([
 	 register_engine/3,
-	 register_engine/4,
 	 get_compress_methods/0,
 	 get_engine_names/0,
 	 get_engine_names/1,
@@ -41,9 +40,6 @@
 	 is_engine_available/1,
 	 get_engine_driver/1
 	]).
-
-%% Conditionally used functions (export to avoid warning)
--export([register_builtin_engine/3]).
 
 %% Compression activation.
 -export([
@@ -77,12 +73,14 @@
 	 code_change/3
 	]).
 
+%% exmpp_compress engine callbacks
+-callback start_link() -> {ok, pid()} | ignore | {error, term()}.
+
 -record(state, {engines,
 		by_compress_method
 	       }).
 
 -record(compress_engine, {name,
-			  driver_path,
 			  driver,
 			  compress_methods = []
 			 }).
@@ -94,14 +92,6 @@
 
 -define(SERVER, ?MODULE).
 -define(DEFAULT_ENGINE, zlib).
-
--define(COMMAND_SET_COMPRESS_METHOD, 1).
--define(COMMAND_SET_COMPRESS_LEVEL,  2).
--define(COMMAND_PREPARE_COMPRESS,    3).
--define(COMMAND_PREPARE_UNCOMPRESS,  4).
--define(COMMAND_COMPRESS,            5).
--define(COMMAND_UNCOMPRESS,          6).
--define(COMMAND_SVN_REVISION,        7).
 
 %% --------------------------------------------------------------------
 %% Initialization.
@@ -121,16 +111,8 @@ start_link() ->
     register_builtin_engines(),
     Ret.
 
--ifdef(HAVE_ZLIB).
--define(REGISTER_ZLIB,
-	register_builtin_engine(zlib, exmpp_compress_zlib,
-				[{zlib, 10}, {gzip, 10}])).
--else.
--define(REGISTER_ZLIB, ok).
--endif.
-
 register_builtin_engines() ->
-    ?REGISTER_ZLIB,
+    register_builtin_engine(zlib, exmpp_compress_zlib, [{zlib, 10}, {gzip, 10}]),
     ok.
 
 register_builtin_engine(Name, Driver, Compress_Methods) ->
@@ -154,21 +136,9 @@ register_builtin_engine(Name, Driver, Compress_Methods) ->
 %%     Priority = integer()
 %% @doc Add a new compression engine.
 
-register_engine(Name, Driver, Compress_Methods) ->
-    register_engine(Name, undefined, Driver, Compress_Methods).
-
-%% @spec (Name, Driver_Path, Driver, Compress_Methods) -> ok
-%%     Name = atom()
-%%     Driver_Path = string()
-%%     Driver = atom()
-%%     Compress_Methods = [{atom(), Priority}]
-%%     Priority = integer()
-%% @doc Add a new compression engine.
-
-register_engine(Name, Driver_Path, Driver, Compress_Methods)
+register_engine(Name, Driver, Compress_Methods)
   when is_atom(Name), is_list(Compress_Methods), length(Compress_Methods) > 0 ->
     Engine = #compress_engine{name = Name,
-			      driver_path = Driver_Path,
 			      driver = Driver,
 			      compress_methods = Compress_Methods
 			     },
@@ -261,37 +231,37 @@ get_engine_driver(Engine_Name) ->
 
 enable_compression(Socket_Desc, Options) ->
     %% Start a port driver instance.
-    Driver_Name = get_engine_from_options(Options),
-    Port = exmpp_internals:open_port(Driver_Name),
+    Driver = get_engine_from_options(Options),
 
     %% Initialize the port.
-    try
-	%% Set compression method.
-        case proplists:get_value(compress_method, Options) of
-            undefined -> ok;
-            CM        -> engine_set_compress_method(Port, CM)
-        end,
+    Port = case Driver:start_link() of
+	       {ok, P} -> P;
+	       ignore -> throw(ignore);
+	       {error, Err} ->
+		   throw(Err)
+	   end,
 
-	%% Set compression level.
-        case proplists:get_value(compress_level, Options) of
-            undefined -> ok;
-            Level     -> engine_set_compress_level(Port, Level)
-        end,
-
-	%% Packet mode.
-        Packet_Mode = proplists:get_value(mode, Options, binary),
-
-	%% Enable compression.
-        engine_prepare_compress(Port),
-        engine_prepare_uncompress(Port),
-        #compress_socket{socket = Socket_Desc,
-			 packet_mode = Packet_Mode,
-			 port = Port}
-    catch
-        _:Exception ->
-            exmpp_internals:close_port(Port),
-            throw(Exception)
-    end.
+    %% Set compression method.
+    case proplists:get_value(compress_method, Options) of
+	undefined -> ok;
+	CM        -> engine_set_compress_method(Port, CM)
+    end,
+    
+    %% Set compression level.
+    case proplists:get_value(compress_level, Options) of
+	undefined -> ok;
+	Level     -> engine_set_compress_level(Port, Level)
+    end,
+    
+    %% Packet mode.
+    Packet_Mode = proplists:get_value(mode, Options, binary),
+    
+    %% Enable compression.
+    engine_prepare_compress(Port),
+    engine_prepare_uncompress(Port),
+    #compress_socket{socket = Socket_Desc,
+		     packet_mode = Packet_Mode,
+		     port = Port}.
 
 %% @spec (Compress_Socket) -> Socket_Desc
 %%     Compress_Socket = compress_socket()
@@ -300,8 +270,7 @@ enable_compression(Socket_Desc, Options) ->
 %%     Socket = term()
 %% @doc Disable compression and return the underlying socket.
 
-disable_compression(#compress_socket{socket = Socket_Desc, port = Port}) ->
-    exmpp_internals:close_port(Port),
+disable_compression(#compress_socket{socket=Socket_Desc}) ->
     Socket_Desc.
 
 %% --------------------------------------------------------------------
@@ -485,22 +454,15 @@ close(#compress_socket{socket = Socket_Desc} = Compress_Socket) ->
 
 %% @hidden
 
-port_revision(#compress_socket{port = Port}) ->
-    engine_svn_revision(Port).
+port_revision(#compress_socket{port=Port}) ->
+    engine_revision(Port).
 
 %% --------------------------------------------------------------------
 %% Engine function wrappers.
 %% --------------------------------------------------------------------
 
-control(Port, Command, Data) ->
-    case port_control(Port, Command, Data) of
-        <<0, Result/binary>> -> Result;
-        <<1, Error/binary>>  -> {error, binary_to_term(Error)}
-    end.
-
 engine_set_compress_method(Port, Method) ->
-    case control(Port, ?COMMAND_SET_COMPRESS_METHOD,
-		 term_to_binary(Method)) of
+    case gen_server:call(Port, {set_compress_method, Method}) of
         {error, Reason} ->
             throw({compress, compress, set_compress_method, Reason});
         _ ->
@@ -508,8 +470,7 @@ engine_set_compress_method(Port, Method) ->
     end.
 
 engine_set_compress_level(Port, Level) ->
-    case control(Port, ?COMMAND_SET_COMPRESS_LEVEL,
-		 term_to_binary(Level)) of
+    case gen_server:call(Port, {set_compress_level, Level}) of
         {error, Reason} ->
             throw({compress, compress, set_compress_level, Reason});
         _ ->
@@ -517,7 +478,7 @@ engine_set_compress_level(Port, Level) ->
     end.
 
 engine_prepare_compress(Port) ->
-    case control(Port, ?COMMAND_PREPARE_COMPRESS, <<>>) of
+    case gen_server:call(Port, {prepare_compress, <<>>}) of
         {error, Reason} ->
             throw({compress, compress, prepare_compress, Reason});
         _ ->
@@ -525,7 +486,7 @@ engine_prepare_compress(Port) ->
     end.
 
 engine_prepare_uncompress(Port) ->
-    case control(Port, ?COMMAND_PREPARE_UNCOMPRESS, <<>>) of
+    case gen_server:call(Port, {prepare_uncompress, <<>>}) of
         {error, Reason} ->
             throw({compress, compress, prepare_uncompress, Reason});
         _ ->
@@ -537,7 +498,7 @@ engine_compress(Port, Data) when is_list(Data) ->
 engine_compress(_Port, <<>>) ->
     <<>>;
 engine_compress(Port, Data) ->
-    case control(Port, ?COMMAND_COMPRESS, Data) of
+    case gen_server:call(Port, {compress, Data}) of
         {error, Reason} ->
             throw({compress, compress, do_compress, Reason});
         Result ->
@@ -549,19 +510,19 @@ engine_uncompress(Port, Data) when is_list(Data) ->
 engine_uncompress(_Port, <<>>) ->
     <<>>;
 engine_uncompress(Port, Data) ->
-    case control(Port, ?COMMAND_UNCOMPRESS, Data) of
+    case gen_server:call(Port, {uncompress, Data}) of
         {error, Reason} ->
             throw({compress, uncompress, do_uncompress, Reason});
         Result ->
             Result
     end.
 
-engine_svn_revision(Port) ->
-    case control(Port, ?COMMAND_SVN_REVISION, <<>>) of
+engine_revision(Port) ->
+    case gen_server:call(Port, {revision, <<>>}) of
         {error, Reason} ->
             throw({compress, handshake, svn_revision, Reason});
         Revision ->
-            binary_to_term(Revision)
+            Revision
     end.
 
 %% --------------------------------------------------------------------
@@ -580,18 +541,16 @@ init([]) ->
 handle_call({register_engine,
 	     #compress_engine{name = Name,
 			      compress_methods = Compress_Methods,
-			      driver_path = Driver_Path,
-			      driver = Driver_Name} = Engine},
+			      driver = Driver} = Engine},
 	    _From,
 	    #state{engines = Engines, by_compress_method = By_CM} = State) ->
     try
 	%% Load the driver now.
-        case Driver_Path of
-            undefined ->
-                exmpp_internals:load_driver(Driver_Name);
-            _ ->
-                exmpp_internals:load_driver(Driver_Name, [Driver_Path])
-        end,
+	case exmpp_internals:is_module(Driver) of
+	    true -> ok;
+	    false -> throw({invalid_module, Driver})
+	end,
+
 	%% Add engine to the global list.
         New_Engines = dict:store(Name, Engine, Engines),
 	%% Index engine by its compress methods.
@@ -639,29 +598,29 @@ handle_call({get_engine, Engine_Name}, _From,
     end;
 
 handle_call(Request, From, State) ->
-    lager:info("~p:handle_call/3:~n- Request: ~p~n- From: ~p~n"
-	       "- State: ~p~n", [?MODULE, Request, From, State]),
+    lager:debug("~p:handle_call/3:~n- Request: ~p~n- From: ~p~n"
+		"- State: ~p~n", [?MODULE, Request, From, State]),
     {reply, ok, State}.
 
 %% @hidden
 
 handle_cast(Request, State) ->
-    lager:info("~p:handle_cast/2:~n- Request: ~p~n"
-	       "- State: ~p~n", [?MODULE, Request, State]),
+    lager:debug("~p:handle_cast/2:~n- Request: ~p~n"
+		"- State: ~p~n", [?MODULE, Request, State]),
     {noreply, State}.
 
 %% @hidden
 
 handle_info(Info, State) ->
-    lager:info("~p:handle_info/2:~n- Info: ~p~n"
-	       "- State: ~p~n", [?MODULE, Info, State]),
+    lager:debug("~p:handle_info/2:~n- Info: ~p~n"
+		"- State: ~p~n", [?MODULE, Info, State]),
     {noreply, State}.
 
 %% @hidden
 
 code_change(Old_Vsn, State, Extra) ->
-    lager:info("~p:code_change/3:~n- Old_Vsn: ~p~n- Extra: ~p~n"
-	       "- State: ~p~n", [?MODULE, Old_Vsn, Extra, State]),
+    lager:debug("~p:code_change/3:~n- Old_Vsn: ~p~n- Extra: ~p~n"
+		"- State: ~p~n", [?MODULE, Old_Vsn, Extra, State]),
     {ok, State}.
 
 %% @hidden

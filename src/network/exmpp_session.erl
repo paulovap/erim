@@ -421,7 +421,6 @@ init([Pid]) ->
 init([Pid, Version]) ->
     inets:start(),
     exmpp_stringprep:start(),
-    exmpp_compress:start(),
 
     {A1,A2,A3} = now(),
     random:seed(A1, A2, A3),
