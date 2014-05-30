@@ -94,10 +94,10 @@ handle_call({set_compress_level, Level}, _From, State)
 handle_call({set_compress_level, _Level}, _From, State) ->
     {reply, ok, State};
 
-handle_call({prepare_compress, _}, _From, #state{port=Port, level=Level}=State) ->
+handle_call(prepare_compress, _From, #state{port=Port, level=Level}=State) ->
     {reply, ok, State#state{port=zlib:deflateInit(Port, Level)}};
 
-handle_call({prepare_uncompress, _}, _From, #state{port=Port}=State) ->
+handle_call(prepare_uncompress, _From, #state{port=Port}=State) ->
     {reply, ok, State#state{port=zlib:inflateInit(Port)}};
 
 handle_call({compress, Data}, _From, #state{port=Port}=State) ->
@@ -106,12 +106,11 @@ handle_call({compress, Data}, _From, #state{port=Port}=State) ->
 handle_call({uncompress, Data}, _From, #state{port=Port}=State) ->
     {reply, zlib:inflate(Port, Data), State};
 
-handle_call({revision, _}, _From, State) ->
+handle_call(revision, _From, State) ->
     {reply, ?REVISION, State};
 
 handle_call(_Request, _From, State) ->
-    Reply = ok,
-    {reply, Reply, State}.
+    {reply, {error, unknown_command}, State}.
 
 %%--------------------------------------------------------------------
 %% @private

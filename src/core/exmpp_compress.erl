@@ -478,7 +478,7 @@ engine_set_compress_level(Port, Level) ->
     end.
 
 engine_prepare_compress(Port) ->
-    case gen_server:call(Port, {prepare_compress, <<>>}) of
+    case gen_server:call(Port, prepare_compress) of
         {error, Reason} ->
             throw({compress, compress, prepare_compress, Reason});
         _ ->
@@ -486,7 +486,7 @@ engine_prepare_compress(Port) ->
     end.
 
 engine_prepare_uncompress(Port) ->
-    case gen_server:call(Port, {prepare_uncompress, <<>>}) of
+    case gen_server:call(Port, prepare_uncompress) of
         {error, Reason} ->
             throw({compress, compress, prepare_uncompress, Reason});
         _ ->
@@ -518,7 +518,7 @@ engine_uncompress(Port, Data) ->
     end.
 
 engine_revision(Port) ->
-    case gen_server:call(Port, {revision, <<>>}) of
+    case gen_server:call(Port, revision) of
         {error, Reason} ->
             throw({compress, handshake, svn_revision, Reason});
         Revision ->
