@@ -11,6 +11,8 @@
 %% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
 %% the License for the specific language governing rights and limitations
 %% under the License.
+-ifndef(erim_xml_hrl).
+-define(erim_xml_hrl, true).
 
 % --------------------------------------------------------------------
 % Type definition.
@@ -111,3 +113,5 @@
 
 -define(XMLCDATA(CData),
   exmpp_xml:cdata(CData)).
+
+-endif.

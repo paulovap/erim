@@ -19,6 +19,8 @@
 % prepared versions (exmpp_jid:prep_node/1, exmpp_jid:prep_domain/1). Load tests
 % performed on ejabberd so far indicate an observable memory win when
 % using this representation, with no significant CPU cost.
+-ifndef(erim_jid_hrl).
+-define(erim_jid_hrl, true).
 
 % JID.
 -record(jid, {
@@ -27,3 +29,5 @@
   domain   :: binary() | undefined, %% prepared domain
   resource :: binary() | undefined  %% prepared resource
 }).
+
+-endif.

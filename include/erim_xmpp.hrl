@@ -11,6 +11,10 @@
 %% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
 %% the License for the specific language governing rights and limitations
 %% under the License.
+-ifndef(erim_xmpp_hrl).
+-define(erim_xmpp_hrl, true).
+
+-include("erim_xml.hrl").
 
 % --------------------------------------------------------------------
 % Records to represent XMPP/Jabber specific structures.
@@ -80,3 +84,5 @@
 -define(IQ_SET(To, Id), (
   ?IQ("set", To, Id)
 )).
+
+-endif.

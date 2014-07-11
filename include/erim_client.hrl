@@ -11,7 +11,10 @@
 %% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
 %% the License for the specific language governing rights and limitations
 %% under the License.
+-ifndef(erim_client_hrl).
+-define(erim_client_hrl, true).
 
+-include("erim_xml.hrl").
 
 %% This record is used to pass received packets back to client.
 %% The record is defined to make it easy to use pattern matching on
@@ -25,3 +28,8 @@
           queryns,     % IQ only: Namespace of the query
           raw_packet   % raw exmpp record
         }).
+
+-type(erim_match() :: Name :: xmlname() | {Name :: xmlname(), NS :: xmlname()}).
+-type(erim_handler() :: {Match :: erim_match(), Handler :: atom(), Opts :: any()}).
+
+-endif.

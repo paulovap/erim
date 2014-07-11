@@ -10,6 +10,8 @@
 %% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
 %% the License for the specific language governing rights and limitations
 %% under the License.
+-ifndef(erim_caps_hrl).
+-define(erim_caps_hrl, true).
 
 % Records to represent Caps.
 %% --------------------------------------------------------------------
@@ -121,3 +123,5 @@
 %% @type hash() = binary()
 
 -type(hash() :: binary()).
+
+-endif.

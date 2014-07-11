@@ -11,6 +11,8 @@
 %% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
 %% the License for the specific language governing rights and limitations
 %% under the License.
+-ifndef(erim_nss_hrl).
+-define(erim_nss_hrl, true).
 
 % --------------------------------------------------------------------
 % Namespace and prefix macros.
@@ -1248,3 +1250,5 @@
 -define(NS_XHTML,                    'http://www.w3.org/1999/xhtml').
 -define(NS_XHTML_s,                  "http://www.w3.org/1999/xhtml").
 -define(NS_XHTML_b,                  <<"http://www.w3.org/1999/xhtml">>).
+
+-endif.
