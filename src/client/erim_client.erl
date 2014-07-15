@@ -46,7 +46,8 @@
 
 %% API
 -export([start_link/2,
-	 start_link/3]).
+	 start_link/3,
+	 send/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -63,6 +64,10 @@ start_link(Client, Opts) ->
 			{ok, pid()} | {error, term()} | ignore.
 start_link(Ref, Client, Opts) ->
     gen_server:start_link({local, Ref}, ?MODULE, [{client, Client} | Opts], []).
+
+-spec send(Ref :: pid(), Packet :: #xmlel{}) -> ok.
+send(Ref, #xmlel{}=Packet) ->
+    gen_server:cast(Ref, {send, Packet}).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -119,6 +124,9 @@ handle_call(_Req, _From, State) ->
 %%                                  {stop, Reason, State}
 %% @end
 %%--------------------------------------------------------------------
+handle_cast({send, #xmlel{}=Packet}, #erim_state{session=Session}=State) ->
+    exmpp_session:send_packet(Session, Packet),
+    {noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
