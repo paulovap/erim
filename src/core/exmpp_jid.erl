@@ -125,8 +125,6 @@
 %% `Prepd_Resource' is set to the value of `Resource' passed through the
 %% RESOURCEPREP stringprep profile.
 
--type(jid() :: #jid{}).
-
 %% Internal type only used in contracts.
 -type(node_arg()   :: binary() | string() | undefined).
 -type(domain_arg() :: binary() | string()).

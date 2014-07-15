@@ -29,5 +29,6 @@
   domain   :: binary() | undefined, %% prepared domain
   resource :: binary() | undefined  %% prepared resource
 }).
+-type(jid() :: #jid{}).
 
 -endif.

@@ -187,6 +187,8 @@ auth_basic(Session, JID, Password)
 
 %% Set authentication mode to basic (digest)
 %% @deprecated
+auth_basic_digest(Session, JID, Password) when is_binary(Password) ->
+    auth_basic_digest(Session, JID, binary_to_list(Password));
 auth_basic_digest(Session, JID, Password)
   when is_pid(Session),
        is_list(Password) ->

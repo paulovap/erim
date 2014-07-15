@@ -15,6 +15,10 @@
 -define(erim_client_hrl, true).
 
 -include("erim_xml.hrl").
+-include("erim_jid.hrl").
+
+-define(ERIM_CLIENT_ID, <<"erim">>).
+-define(ERIM_CLIENT_URL, <<"https://github.com/jeanparpaillon/erim">>).
 
 %% This record is used to pass received packets back to client.
 %% The record is defined to make it easy to use pattern matching on
@@ -28,8 +32,39 @@
           queryns,     % IQ only: Namespace of the query
           raw_packet   % raw exmpp record
         }).
+-type(received_packet() :: #received_packet{}).
 
--type(erim_match() :: Name :: xmlname() | {Name :: xmlname(), NS :: xmlname()}).
+-type(erim_match() :: xmlname()).
 -type(erim_handler() :: {Match :: erim_match(), Handler :: atom(), Opts :: any()}).
+-type(erim_creds() :: {Jid :: jid(), Passwd :: binary()} | {local, jid()}).
+
+-type(erim_client_category() :: client).
+-type(erim_client_opt() :: {creds, erim_creds()} 
+			 | {handlers, [erim_handler()]}
+			 | {name, binary()}
+			 | {node, binary()}
+			 | {category, erim_client_category()}
+			 | {type, binary()}).
+
+-record(erim_state, {session        :: pid(),
+		     jid            :: jid(),
+		     client         :: atom(),
+		     state          :: term(),
+		     caps           :: erim_caps(),
+		     handlers       :: [erim_handler()]}).
+-type(erim_state() :: #erim_state{}).
+
+-record(erim_caps, {name         = ?ERIM_CLIENT_ID     :: binary(),
+		    node         = ?ERIM_CLIENT_URL    :: binary(),
+		    category     = client              :: erim_client_category(),
+		    type         = <<"pc">>            :: binary(),
+		    features     = []                  :: [xmlname()]}).
+-type(erim_caps() :: #erim_caps{}).
+
+-record(erim_presence, {show        = chat             :: chat | away | xa | dnd,
+			status      = <<>>             :: binary(),
+			priority    = 1                :: integer(),
+			caps        = undefined        :: erim_caps()}).
+-type(erim_presence() :: #erim_presence{}).
 
 -endif.
