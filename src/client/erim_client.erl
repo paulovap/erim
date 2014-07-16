@@ -89,9 +89,9 @@ init(Opts) ->
 	undefined ->
 	    {stop, missing_credentials};
 	{#jid{}=Jid, Passwd} when is_binary(Passwd) ->
-	    init_session({Jid, Passwd}, Opts);
-	{local, #jid{}=LocalJid} ->
-	    init_local(LocalJid);
+	    init_session(Opts, #erim_state{creds={Jid, Passwd}});
+	{local, #jid{}=Jid} ->
+	    init_local(Opts, #erim_state{creds={local, Jid}});
 	Else ->
 	    {stop, {invalid_credentials, Else}}
     end.
@@ -163,7 +163,7 @@ handle_info(#received_packet{packet_type=message}=Pkt, State) ->
 	    lager:debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
 	    {noreply, State}
     end;
-		    
+
 handle_info(#received_packet{packet_type=iq, queryns=NS, raw_packet=Raw}=_Pkt, State) ->
     lager:debug("Dispatching iq packet: ~p~n", [_Pkt#received_packet.raw_packet]),
     case call(NS, handle_iq, Raw, State) of
@@ -175,7 +175,7 @@ handle_info(#received_packet{packet_type=iq, queryns=NS, raw_packet=Raw}=_Pkt, S
 	    lager:debug("Packet ignored: ~p~n", [_Pkt#received_packet.raw_packet]),
 	    {noreply, State}
     end;
-		    
+
 handle_info(_Info, State) ->
     {noreply, State}.
 
@@ -237,16 +237,15 @@ call(message, Fun, Args, #erim_state{client=Mod, state=CS}=S) ->
 	    ignore
     end.
 
-
-init_session({Jid, Passwd}, Opts) ->
+init_session(Opts, #erim_state{creds={Jid, Passwd}}=S) ->
     Session = exmpp_session:start(),
     exmpp_session:auth_basic_digest(Session, Jid, Passwd),
-    S = #erim_state{jid=Jid, session=Session},
+    S2 = S#erim_state{session=Session},
     case exmpp_session:connect_TCP(Session, proplists:get_value(server, Opts, "")) of
 	{ok, _SId} ->
-	    init_auth(S, Opts);
+	    init_auth(S2, Opts);
 	{ok, _SId, _F} ->
-	    init_auth(S, Opts);
+	    init_auth(S2, Opts);
 	Else ->
 	    {stop, {session_error, Else}}
     end.
@@ -265,9 +264,29 @@ init_auth(#erim_state{session=Session}=S, Opts) ->
 	    {stop, Err}
     end.
 
-init_local(_Jid) ->
+init_local(Opts, #erim_state{}=S) ->
     lager:debug("Starting XMPP client with link-local mode~n", []),
-    {ok, #erim_state{}}.
+    case init_handler(Opts, S) of
+	{ok, S2} ->
+	    init_advertisement(Opts, get_caps(S2));
+	{error, Err} ->
+	    lager:error("Error initializing XMPP handlers: ~p~n", [Err]),
+	    {stop, Err}
+    end.	    
+
+init_advertisement(Opts, #erim_state{creds={local, Jid}, client=Client, state=CS, caps=Caps}=S) ->
+    dnssd:start(),
+    Name = proplists:get_value(name, Opts, ?ERIM_CLIENT_ID),
+    Pres = case Client:initial_presence(CS) of
+	       {#erim_presence{}=P, _CS2} -> P;
+	       ignore -> #erim_presence{}
+	   end,
+    Txt = exmpp_presence:get_txt(proplists:get_value(node, Opts, S#erim_state.node),
+				 Jid, Pres, Caps),
+    lager:debug("Advertising ~s: ~p~n", [Name, Txt]),
+    exmpp_dns:register_dnssd(Name, Txt),
+    dnssd:stop(),
+    {ok, S}.
 
 init_handler(Opts, #erim_state{}=S) ->
     case proplists:get_value(client, Opts) of
@@ -299,15 +318,17 @@ init_handlers2([{NS, Handler, Opts} | Rest], Acc, S) ->
 	    {error, {Handler, init_failed, Err}}
     end.
 
-init_presence(#erim_state{session=Session, client=Client, state=CS, caps=Caps}=State) ->
+init_presence(#erim_state{session=Session, client=Client, state=CS, node=Node, caps=Caps}=State) ->
     case Client:initial_presence(CS) of
 	{#erim_presence{}=P, CS2} ->
-	    Pkt = exmpp_presence:available(P#erim_presence{caps=Caps}),
-	    exmpp_session:send_packet(Session, Pkt),
+	    Pkt = exmpp_presence:available(P),
+	    Pkt2 = exmpp_presence:set_capabilities(Pkt, Node, Caps),
+	    exmpp_session:send_packet(Session, Pkt2),
 	    {ok, State#erim_state{state=CS2}};
 	ignore ->
-	    Pkt = exmpp_presence:available(#erim_presence{caps=Caps}),
-	    exmpp_session:send_packet(Session, Pkt),
+	    Pkt = exmpp_presence:available(#erim_presence{}),
+	    Pkt2 = exmpp_presence:set_capabilities(Pkt, Node, Caps),
+	    exmpp_session:send_packet(Session, Pkt2),
 	    {ok, State}
     end.
 
@@ -374,12 +395,10 @@ handle_msg(#received_packet{type_attr="headline", raw_packet=Raw}, State) ->
 handle_msg(#received_packet{type_attr="error", raw_packet=Raw}, State) ->
     call(message, msg_error, Raw, State).
 
-get_caps(#erim_state{caps=undefined}=S) ->
-    get_caps(S#erim_state{caps=#erim_caps{}});
-get_caps(#erim_state{handlers=H, caps=Caps}=S) ->
+get_caps(#erim_state{handlers=H}=S) ->
     It = gb_trees:iterator(H),
     Features = get_features(gb_trees:next(It), []),
-    S#erim_state{caps=Caps#erim_caps{features=Features}}.
+    S#erim_state{caps=Features}.
 
 get_features(none, Acc) ->
     Acc;

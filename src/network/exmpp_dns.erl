@@ -1,4 +1,5 @@
 %% Copyright ProcessOne 2006-2010. All Rights Reserved.
+%% Copyright Jean Parpaillon 2014. All Rights Reserved.
 %%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
@@ -11,6 +12,7 @@
 %% the License for the specific language governing rights and limitations
 %% under the License.
 
+%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 %% @author Jack Moffitt <jack@metajack.im>
 
 %% 
@@ -27,7 +29,9 @@
 
 -module(exmpp_dns).
 -author("Jack Moffitt <jack@metajack.im>").
+-author("Jean Parpaillon <jean.parpaillon@free.fr>").
 
+-include("erim_jid.hrl").
 -include_lib("kernel/include/inet.hrl").
 
 % Exports
@@ -35,7 +39,8 @@
          get_c2s/1,
          get_c2s/2,
          get_s2s/1,
-         get_s2s/2
+         get_s2s/2,
+	 register_dnssd/2
          ]).
 
 srv_lookup(Name, Domain, DefaultPort, Retries) when Retries < 1 ->
@@ -164,6 +169,14 @@ get_servers(Service, Proto, Domain, DefaultPort) ->
 	       end,
     do_sort(AddrList).
 
+-spec register_dnssd(Name :: binary(), Txt :: list()) -> ok.
+register_dnssd(Name, Txt) when is_list(Txt) ->
+    Type = <<"_presence._tcp">>,
+    {ok, Ref} = dnssd:register(Name, Type, 5562, Txt),
+    receive 
+	{dnssd, Ref, _} -> ok
+    after 0 -> ok
+    end.
 
 %% @doc Helper function to set up do_sort/2.
 %%

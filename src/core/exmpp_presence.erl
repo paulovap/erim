@@ -53,7 +53,8 @@
 	 get_priority/1,
 	 set_priority/2,
 	 get_capabilities/1,
-	 set_capabilities/2]).
+	 set_capabilities/3,
+	 get_txt/4]).
 
 -define(EMPTY_PRESENCE, #xmlel{ns = ?NS_JABBER_CLIENT, name = 'presence'}).
 
@@ -95,11 +96,10 @@ presence(Type, Status) ->
     set_status(set_type(?EMPTY_PRESENCE, Type), Status).
 
 -spec available(erim_presence()) -> #xmlel{}.
-available(#erim_presence{show=Show, status=Status, priority=Pri, caps=Caps}) ->
-    set_capabilities(
-      set_priority(
-	set_status(
-	  set_show(?EMPTY_PRESENCE, Show), Status), Pri), Caps).
+available(#erim_presence{show=Show, status=Status, priority=Pri}) ->
+    set_priority(
+      set_status(
+	set_show(?EMPTY_PRESENCE, Show), Status), Pri).
 
 %% @spec () -> Presence
 %%     Presence = exmpp_xml:xmlel()
@@ -393,7 +393,7 @@ set_priority(#xmlel{ns = NS} = Presence, Priority)
 %%     Presence = exmpp_xml:xmlel()
 %%     Capabilities = xmlel()
 %% @doc Return the capabilities of a presence
--spec get_capabilities(xmlel()) -> erim_caps().
+-spec get_capabilities(xmlel()) -> #xmlel{}.
 get_capabilities(#xmlel{} = Presence) when ?IS_PRESENCE(Presence) ->
     case exmpp_xml:get_element(Presence, ?NS_CAPS, 'c') of
 	undefined -> undefined;
@@ -403,11 +403,11 @@ get_capabilities(#xmlel{} = Presence) when ?IS_PRESENCE(Presence) ->
 
 %% @spec (Presence, Capabilities) -> New_Presence
 %%     Presence = exmpp_xml:xmlel()
-%%     Priority = erim_caps()
+%%     Capabilities = erim_caps()
 %%     New_Presence = exmpp_xml:xmlel()
 %% @doc Set the `<c/>' element of a presence stanza.
--spec set_capabilities(xmlel(), integer()) -> xmlel().
-set_capabilities(#xmlel{}=Presence, #erim_caps{node=Node}=Caps)
+-spec set_capabilities(xmlel(), binary(), list()) -> xmlel().
+set_capabilities(#xmlel{}=Presence, Node, Caps)
   when ?IS_PRESENCE(Presence) ->
     C = exmpp_xml:element(?NS_CAPS, c, 
 			  [exmpp_xml:attribute(<<"hash">>, <<"sha-1">>),
@@ -416,10 +416,24 @@ set_capabilities(#xmlel{}=Presence, #erim_caps{node=Node}=Caps)
 			  []),
     exmpp_xml:append_child(Presence, C).
 
+-spec get_txt(Node :: binary(), Jid :: #jid{}, erim_presence(), Features :: [atom()]) -> term().
+get_txt(Node, #jid{}=Jid, #erim_presence{}=Pres, Features) ->
+    {ok, Hostname} = inet:gethostname(),
+    LocalJid = << (Jid#jid.node)/binary, "@", (list_to_binary(Hostname))/binary >>,
+    [{txtvers, "1"},
+     {hash, 'sha-1'},
+     {jid, LocalJid},
+     {node, Node},
+     {'port.p2pj', "5562"},
+     {status, Pres#erim_presence.status},
+     {ver, get_capabilities_version(Features)}
+    ].
+
+
 %%%
 %%% Private
 %%%
-get_capabilities_version(#erim_caps{features=Features}) ->
+get_capabilities_version(Features) ->
     base64:encode(crypto:hash(sha, cat_features(Features, []))).
 
 cat_features([], Acc) ->

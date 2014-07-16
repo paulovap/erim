@@ -46,25 +46,21 @@
 			 | {category, erim_client_category()}
 			 | {type, binary()}).
 
--record(erim_state, {session        :: pid(),
-		     jid            :: jid(),
-		     client         :: atom(),
-		     state          :: term(),
-		     caps           :: erim_caps(),
-		     handlers       :: [erim_handler()]}).
+-record(erim_state, {name                            :: binary(),
+		     node      = ?ERIM_CLIENT_URL    :: binary(),
+		     category  = client              :: erim_client_category(),
+		     type      = <<"pc">>            :: binary(),
+		     session                         :: pid(),
+		     creds                           :: {local, jid()} | {jid(), binary()},
+		     client                          :: atom(),
+		     state                           :: term(),
+		     caps      = []                  :: [xmlname()],
+		     handlers  = []                  :: [erim_handler()]}).
 -type(erim_state() :: #erim_state{}).
-
--record(erim_caps, {name         = ?ERIM_CLIENT_ID     :: binary(),
-		    node         = ?ERIM_CLIENT_URL    :: binary(),
-		    category     = client              :: erim_client_category(),
-		    type         = <<"pc">>            :: binary(),
-		    features     = []                  :: [xmlname()]}).
--type(erim_caps() :: #erim_caps{}).
 
 -record(erim_presence, {show        = chat             :: chat | away | xa | dnd,
 			status      = <<>>             :: binary(),
-			priority    = 1                :: integer(),
-			caps        = undefined        :: erim_caps()}).
+			priority    = 1                :: integer()}).
 -type(erim_presence() :: #erim_presence{}).
 
 -endif.
