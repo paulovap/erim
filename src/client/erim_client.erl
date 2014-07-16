@@ -21,19 +21,26 @@
 %%
 %% * presence
 %%   * initial_presence(State :: any()) -> {erim_presence(), State}.
-%%   * approve(Msg :: xmlel(), State :: any()) -> {ok, from, State} 
+%%   * approve(Msg :: #received_packet{}, State :: any()) -> {ok, from, State} 
 %%                                              | {ok, both, State}
 %%                                              | {ok, none, State}
 %%                                              | {error, term()}.
-%%   * approved(Msg :: xmlel(), State :: any()) -> {ok, State} | {error, term()}.
+%%   * approved(Msg :: #received_packet{}, State :: any()) -> {ok, State} | {error, term()}.
 %%
 %% * message
-%%   * msg_message(Msg :: xmlel(), State :: any()) -> {ok, State} | {error, term()}
-%%   * msg_chat(Msg :: xmlel(), State :: any()) -> {ok, State} | {error, term()}
-%%   * msg_group(Msg :: xmlel(), State :: any()) -> {ok, State} | {error, term()}
-%%   * msg_headline(Msg :: xmlel(), State :: any()) -> {ok, State} | {error, term()}
-%%   * msg_error(Msg :: xmlel(), State :: any()) -> {ok, State} | {error, term()}
-%%   
+%%   * msg_message(Msg :: #received_packet{}, State :: any()) -> {ok, State} | {error, term()}
+%%   * msg_chat(Msg :: #received_packet{}, State :: any()) -> {ok, State} | {error, term()}
+%%   * msg_group(Msg :: #received_packet{}, State :: any()) -> {ok, State} | {error, term()}
+%%   * msg_headline(Msg :: #received_packet{}, State :: any()) -> {ok, State} | {error, term()}
+%%   * msg_error(Msg :: #received_packet{}, State :: any()) -> {ok, State} | {error, term()}
+%%
+%% Additional handlers:
+%% * init(HandlerOpts :: any(), Opts :: any(), Ref :: pid()) -> {ok, State :: any()} | {error, term()}.
+%% 
+%% * handle_iq(Iq :: #received_packet{}, State :: any()) -> {ok, Ret :: any(), NewState :: any()}
+%%                                                        | {ok, NewState :: any()}
+%%                                                        | {error, Error :: term()}.
+%%
 -module(erim_client).
 -compile({parse_transform, lager_transform}).
 
@@ -89,7 +96,8 @@ init(Opts) ->
 	undefined ->
 	    {stop, missing_credentials};
 	{#jid{}=Jid, Passwd} when is_binary(Passwd) ->
-	    init_session(Opts, #erim_state{creds={Jid, Passwd}});
+	    O2 = [{creds, {Jid, hidden}} | Opts],
+	    init_session(O2, #erim_state{creds={Jid, Passwd}});
 	{local, #jid{}=Jid} ->
 	    init_local(Opts, #erim_state{creds={local, Jid}});
 	Else ->
@@ -164,15 +172,15 @@ handle_info(#received_packet{packet_type=message}=Pkt, State) ->
 	    {noreply, State}
     end;
 
-handle_info(#received_packet{packet_type=iq, queryns=NS, raw_packet=Raw}=_Pkt, State) ->
-    lager:debug("Dispatching iq packet: ~p~n", [_Pkt#received_packet.raw_packet]),
-    case call(NS, handle_iq, Raw, State) of
-	{ok, _Ret, S2} ->
+handle_info(#received_packet{packet_type=iq, queryns=NS}=Pkt, State) ->
+    lager:debug("Dispatching iq packet: ~p~n", [Pkt#received_packet.raw_packet]),
+    case call({iq, NS}, handle_iq, Pkt, State) of
+	{ok, S2} ->
 	    {noreply, S2};
 	{error, Err} ->
 	    {stop, Err, State};
 	ignore ->
-	    lager:debug("Packet ignored: ~p~n", [_Pkt#received_packet.raw_packet]),
+	    lager:debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
 	    {noreply, State}
     end;
 
@@ -207,35 +215,66 @@ code_change(_OldVsn, State, _Extra) ->
 %%%
 %%% Priv
 %%%
-call({iq, NS}, Fun, Args, #erim_state{handlers=H}=S) ->
+call({iq, NS}, Fun, #received_packet{raw_packet=Raw}=Pkt, #erim_state{handlers=H}=S) ->
     case gb_trees:lookup(NS, H) of
 	{value, {Handler, HandlerState}} ->
-	    case Handler:Fun(Args, HandlerState) of
+	    try Handler:Fun(Pkt, HandlerState) of
 		{ok, HS2} ->
 		    {ok, S#erim_state{handlers=gb_trees:update(NS, {Handler, HS2}, H)}};
 		{ok, Ret, HS2} ->
 		    {ok, Ret, S#erim_state{handlers=gb_trees:update(NS, {Handler, HS2}, H)}};
 		{error, Err} ->
 		    {error, Err}
+	    catch Class:Err ->
+		    respond(Raw, S, 'internal-server-error'),
+		    erlang:Class([
+				  {reason, Err},
+				  {mfa, {Handler, Fun, 2}},
+				  {stacktrace, erlang:get_stacktrace()},
+				  {req, Raw},
+				  {state, HandlerState}
+				 ])
 	    end;
-	undefined -> ignore
+	none -> ignore
     end;
-call(presence, Fun, Args, #erim_state{client=Mod, state=CS}=S) ->
-    case Mod:Fun(Args, CS) of
+
+call(presence, Fun, #received_packet{raw_packet=Raw}=Pkt, #erim_state{client=Mod, state=CS}=S) ->
+    try Mod:Fun(Pkt, CS) of
 	{error, Err} ->
 	    {error, Err};
 	{Ret, CS2} ->
 	    {Ret, S#erim_state{state=CS2}}
+    catch Class:Err ->
+	    respond(Raw, S, 'internal-server-error'),
+	    erlang:Class([
+			  {reason, Err},
+			  {mfa, {Mod, Fun, 2}},
+			  {stacktrace, erlang:get_stacktrace()},
+			  {req, Raw},
+			  {state, CS}
+			 ])
     end;
-call(message, Fun, Args, #erim_state{client=Mod, state=CS}=S) ->
-    try Mod:Fun(Args, CS) of
+
+call(message, Fun, #received_packet{raw_packet=Raw}=Pkt, #erim_state{client=Mod, state=CS}=S) ->
+    try Mod:Fun(Pkt, CS) of
 	{error, Err} ->
 	    {error, Err};
 	{Ret, CS2} ->
 	    {Ret, S#erim_state{state=CS2}}
-    catch error:_Err ->
-	    ignore
+    catch Class:Err ->
+	    respond(Raw, S, 'internal-server-error'),
+	    erlang:Class([
+			  {reason, Err},
+			  {mfa, {Mod, Fun, 2}},
+			  {stacktrace, erlang:get_stacktrace()},
+			  {req, Raw},
+			  {state, CS}
+			 ])
     end.
+
+respond(#xmlel{}=Req, #erim_state{session=Session}, Code) ->
+    Err = exmpp_iq:error(Req, Code),
+    exmpp_session:send_packet(Session, Err).
 
 init_session(Opts, #erim_state{creds={Jid, Passwd}}=S) ->
     Session = exmpp_session:start(),
@@ -305,15 +344,15 @@ init_handlers(Opts, #erim_state{}=S) ->
 	undefined ->
 	    {ok, S#erim_state{handlers=gb_trees:empty()}};
 	H ->
-	    init_handlers2(H, gb_trees:empty(), S)
+	    init_handlers2(H, gb_trees:empty(), Opts, S)
     end.
 
-init_handlers2([], Acc, S) ->
+init_handlers2([], Acc, _Opts, S) ->
     {ok, S#erim_state{handlers=Acc}};
-init_handlers2([{NS, Handler, Opts} | Rest], Acc, S) ->
-    case Handler:init(Opts, self()) of
+init_handlers2([{NS, Handler, HandlerOpts} | Rest], Acc, Opts, S) ->
+    case Handler:init(HandlerOpts, Opts, self()) of
 	{ok, HandlerState} ->
-	    init_handlers2(Rest, gb_trees:insert(NS, {Handler, HandlerState}, Acc), S);
+	    init_handlers2(Rest, gb_trees:insert(NS, {Handler, HandlerState}, Acc), Opts, S);
 	{error, Err} ->
 	    {error, {Handler, init_failed, Err}}
     end.
@@ -332,9 +371,9 @@ init_presence(#erim_state{session=Session, client=Client, state=CS, node=Node, c
 	    {ok, State}
     end.
 
-handle_presence(#received_packet{type_attr="subscribe", from=From, raw_packet=Raw}, 
+handle_presence(#received_packet{type_attr="subscribe", from=From}=Pkt, 
 	   #erim_state{session=Session}=State) ->
-    case call(presence, approve, Raw, State) of
+    case call(presence, approve, Pkt, State) of
 	{none, S2} -> 
 	    {ok, S2};
 	{from, S2} ->
@@ -352,8 +391,8 @@ handle_presence(#received_packet{type_attr="subscribe", from=From, raw_packet=Ra
 	    {error, Err}
     end;
 
-handle_presence(#received_packet{type_attr="subscribed", raw_packet=Raw}, State) ->
-    call(presence, approved, Raw, State);
+handle_presence(#received_packet{type_attr="subscribed"}=Pkt, State) ->
+    call(presence, approved, Pkt, State);
 
 handle_presence(#received_packet{type_attr="unsubscribe"},
 	   #erim_state{}=State) ->
@@ -380,20 +419,20 @@ handle_presence(#received_packet{type_attr="error"},
     {ok, State}.
 
 -spec handle_msg(#received_packet{}, #erim_state{}) -> {ok, #erim_state{}} | {error, term()}.
-handle_msg(#received_packet{type_attr="normal", raw_packet=Raw}, State) ->
-    call(message, msg_message, Raw, State);
+handle_msg(#received_packet{type_attr="normal"}=Pkt, State) ->
+    call(message, msg_message, Pkt, State);
 
-handle_msg(#received_packet{type_attr="chat", raw_packet=Raw}, State) ->
-    call(message, msg_chat, Raw, State);
+handle_msg(#received_packet{type_attr="chat"}=Pkt, State) ->
+    call(message, msg_chat, Pkt, State);
 
-handle_msg(#received_packet{type_attr="groupchat", raw_packet=Raw}, State) ->
-    call(message, msg_group, Raw, State);
+handle_msg(#received_packet{type_attr="groupchat"}=Pkt, State) ->
+    call(message, msg_group, Pkt, State);
 
-handle_msg(#received_packet{type_attr="headline", raw_packet=Raw}, State) ->
-    call(message, msg_headline, Raw, State);
+handle_msg(#received_packet{type_attr="headline"}=Pkt, State) ->
+    call(message, msg_headline, Pkt, State);
 
-handle_msg(#received_packet{type_attr="error", raw_packet=Raw}, State) ->
-    call(message, msg_error, Raw, State).
+handle_msg(#received_packet{type_attr="error"}=Pkt, State) ->
+    call(message, msg_error, Pkt, State).
 
 get_caps(#erim_state{handlers=H}=S) ->
     It = gb_trees:iterator(H),
