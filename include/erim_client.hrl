@@ -14,11 +14,11 @@
 -ifndef(erim_client_hrl).
 -define(erim_client_hrl, true).
 
--include("erim_xml.hrl").
+-include_lib("erim_xml/include/erim_xml.hrl").
 -include("erim_jid.hrl").
 
 -define(ERIM_CLIENT_ID, <<"erim">>).
--define(ERIM_CLIENT_URL, <<"https://github.com/jeanparpaillon/erim">>).
+-define(ERIM_CLIENT_URL, <<"https://github.com/lizenn/erim">>).
 
 %% This record is used to pass received packets back to client.
 %% The record is defined to make it easy to use pattern matching on

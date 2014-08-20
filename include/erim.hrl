@@ -17,8 +17,8 @@
 % Namespace and prefix macros.
 -include("erim_nss.hrl").
 
-% Records to represent XML nodes.
--include("erim_xml.hrl").
+% Records to represent XML elements.
+-include_lib("erim_xml/include/erim_xml.hrl").
 
 % Records to represent XMPP/Jabber specific structures.
 -include("erim_xmpp.hrl").

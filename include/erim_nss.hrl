@@ -18,11 +18,7 @@
 % Namespace and prefix macros.
 % --------------------------------------------------------------------
 
-% Defined by XML.
--define(NS_XML,                      'http://www.w3.org/XML/1998/namespace').
--define(NS_XML_s,                    "http://www.w3.org/XML/1998/namespace").
--define(NS_XML_b,                    <<"http://www.w3.org/XML/1998/namespace">>).
--define(NS_XML_pfx,                  "xml").
+-include_lib("erim_xml/include/erim_xml.hrl").
 
 % Defined by XMPP Core (RFC 3920).
 -define(NS_XMPP,                     'http://etherx.jabber.org/streams').

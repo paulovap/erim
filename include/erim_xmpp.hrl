@@ -14,7 +14,7 @@
 -ifndef(erim_xmpp_hrl).
 -define(erim_xmpp_hrl, true).
 
--include("erim_xml.hrl").
+-include_lib("erim_xml/include/erim_xml.hrl").
 
 % --------------------------------------------------------------------
 % Records to represent XMPP/Jabber specific structures.
