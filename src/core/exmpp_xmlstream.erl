@@ -83,7 +83,7 @@
 %% @spec (Callback, Parser) -> Stream
 %%     Callback = callback()
 %%     Stream = xmlstream()
-%%     Parser = exmpp_xml:xmlparser()
+%%     Parser = erim_xml:xmlparser()
 %% @doc Start a new stream handler.
 %%
 %% The XML parser is reset and options `{root_depth, 1}' and `emit_endtag'
@@ -91,11 +91,11 @@
 %%
 %% The stream will use the old xmlstreamstart tuple.
 %%
-%% @see exmpp_xml:start_parser/1.
-%% @see exmpp_xml:reset_parser/2.
+%% @see erim_xml:start_parser/1.
+%% @see erim_xml:reset_parser/2.
 
 -spec(start/2 ::
-      (callback(), exmpp_xml:xmlparser()) -> xmlstream()).
+      (callback(), erim_xml:xmlparser()) -> xmlstream()).
 
 start(Callback, Parser) ->
     start(Callback, Parser, []).
@@ -103,7 +103,7 @@ start(Callback, Parser) ->
 %% @spec (Callback, Parser, Stream_Options) -> Stream
 %%     Callback = callback()
 %%     Stream = xmlstream()
-%%     Parser = exmpp_xml:xmlparser()
+%%     Parser = erim_xml:xmlparser()
 %%     Stream_Options = [Stream_Option]
 %%     Stream_Option = {xmlstreamstart, old | new}
 %% @doc Start a new stream handler.
@@ -113,11 +113,11 @@ start(Callback, Parser) ->
 %%
 %% The stream will use the old xmlstreamstart tuple by default.
 %%
-%% @see exmpp_xml:start_parser/1.
-%% @see exmpp_xml:reset_parser/2.
+%% @see erim_xml:start_parser/1.
+%% @see erim_xml:reset_parser/2.
 
 -spec(start/3 ::
-      (callback(), exmpp_xml:xmlparser(), [{xmlstreamstart, new | old}]) ->
+      (callback(), erim_xml:xmlparser(), [{xmlstreamstart, new | old}]) ->
 	     xmlstream()).
 
 start(Callback, Parser, Stream_Options) ->
@@ -125,7 +125,7 @@ start(Callback, Parser, Stream_Options) ->
 		    Pid when is_pid(Pid) -> {process, Pid};
 		    _                    -> Callback
 		end,
-    New_Parser = exmpp_xml:reset_parser(Parser,
+    New_Parser = erim_xml:reset_parser(Parser,
 					[{root_depth, 1}, emit_endtag]),
     Stream_Start = case lists:keysearch(xmlstreamstart, 1, Stream_Options) of
 		       {value, {_, new}} -> new;
@@ -146,15 +146,15 @@ start(Callback, Parser, Stream_Options) ->
 -spec(reset/1 :: (xmlstream()) -> xmlstream()).
 
 reset(#xml_stream{parser = Parser} = Stream) ->
-    New_Parser = exmpp_xml:reset_parser(Parser),
+    New_Parser = erim_xml:reset_parser(Parser),
     Stream#xml_stream{parser = New_Parser, opened = false}.
 
 %% @spec (Stream) -> Parser
 %%     Stream = xmlstream()
-%%     Parser = exmpp_xml:xmlparser()
+%%     Parser = erim_xml:xmlparser()
 %% @doc Return the XML parser used.
 
--spec(get_parser/1 :: (xmlstream()) -> exmpp_xml:xmlparser()).
+-spec(get_parser/1 :: (xmlstream()) -> erim_xml:xmlparser()).
 
 get_parser(#xml_stream{parser = Parser}) ->
     Parser.
@@ -196,7 +196,7 @@ stop(_Stream) ->
 		 {error, any()}).
 
 parse(#xml_stream{parser = Parser} = Stream, Data) ->
-    try exmpp_xml:parse(Parser, Data) of
+    try erim_xml:parse(Parser, Data) of
         continue ->
             send_events(Stream, []);
         XML_Elements ->
@@ -343,13 +343,13 @@ change_callback(Stream, CallBack) ->
 
 %% @spec (Data) -> [XML_Element]
 %%     Data = string() | binary()
-%%     XML_Element = exmpp_xml:xmlel() | exmpp_xml:xmlel_old() | exmpp_xml:xmlcdata()
+%%     XML_Element = erim_xml:xmlel() | erim_xml:xmlel_old() | erim_xml:xmlcdata()
 %% @doc Parse the given data.
 %%
 %% The XML parser is created with default options.
 %%
-%% @see exmpp_xml:start_parser/0.
-%% @see exmpp_xml:parse_document/1.
+%% @see erim_xml:start_parser/0.
+%% @see erim_xml:parse_document/1.
 
 -spec(parse_element/1 ::
       (binary() | string()) ->
@@ -360,21 +360,21 @@ parse_element(Data) ->
 
 %% @spec (Data, Parser_Options) -> [XML_Element]
 %%     Data = string() | binary()
-%%     Parser_Options = [exmpp_xml:xmlparseroption()]
-%%     XML_Element = exmpp_xml:xmlel() | exmpp_xml:xmlel_old() | exmpp_xml:xmlcdata()
+%%     Parser_Options = [erim_xml:xmlparseroption()]
+%%     XML_Element = erim_xml:xmlel() | erim_xml:xmlel_old() | erim_xml:xmlcdata()
 %% @doc Parse the given data.
 %%
 %% The XML parser is created with given `Parser_Options' options.
 %%
-%% @see exmpp_xml:start_parser/1.
-%% @see exmpp_xml:parse_document/2.
+%% @see erim_xml:start_parser/1.
+%% @see erim_xml:parse_document/2.
 
 -spec(parse_element/2 ::
-      (binary() | string(), [exmpp_xml:xmlparseroption()]) ->
+      (binary() | string(), [erim_xml:xmlparseroption()]) ->
 	     [xmlnode() | xmlendtag()]).
 
 parse_element(Data, Parser_Options) ->
-    case exmpp_xml:parse_document(Data, Parser_Options) of
+    case erim_xml:parse_document(Data, Parser_Options) of
         done ->
             throw({xmlstream, parse_element, parse_error, done});
         [] ->
@@ -443,9 +443,9 @@ set_wrapper_tagnames(Stream, TagNames) when is_list(TagNames) ->
 %%     Stream_Start = {xmlstreamstart, XML_Element} | {xmlstreamstart, Name, Attrs}
 %%     Stream_Element = {xmlstreamelement, XML_Element}
 %%     Stream_End = {xmlstreamend, XML_End_Tag}
-%%       XML_Element = exmpp_xml:xmlel() | exmpp_xml:xmlel_old()
-%%       XML_End_Tag = exmpp_xml:xmlendtag()
+%%       XML_Element = erim_xml:xmlel() | erim_xml:xmlel_old()
+%%       XML_End_Tag = erim_xml:xmlendtag()
 %%       Name = atom() | string()
-%%       Attrs = [exmpp_xml:xmlattr_old() | exmpp_xml:xmlattr()]
+%%       Attrs = [erim_xml:xmlattr_old() | erim_xml:xmlattr()]
 %%     Stream_Error = {xmlstreamerror, Reason}.
 %% Records representing an event sent by the {@link parse/2} function.
