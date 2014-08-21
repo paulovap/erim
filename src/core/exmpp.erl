@@ -51,14 +51,15 @@
 
 start() ->
     application:start(lager),
-    application:start(exmpp).
+    application:start(erim_xml),
+    application:start(erim).
 
 %% @spec () -> Version
 %%     Version = string()
 %% @doc Return the version of the application.
 
 version() ->
-    {ok, Version} = application:get_key(exmpp, vsn),
+    {ok, Version} = application:get_key(erim, vsn),
     Version.
 
 %% --------------------------------------------------------------------
