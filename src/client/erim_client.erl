@@ -54,7 +54,7 @@
 %% API
 -export([start_link/2,
 	 start_link/3,
-	 send/2]).
+	 send/2, loop/3]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -133,7 +133,10 @@ handle_call(_Req, _From, State) ->
 %% @end
 %%--------------------------------------------------------------------
 handle_cast({send, #xmlel{}=Packet}, #erim_state{session=Session}=State) ->
-    exmpp_session:send_packet(Session, Packet),
+    case is_pid(Session) of
+        true     -> exmpp_session:send_packet(Session, Packet);
+        _ -> send_sock(Session, Packet)
+    end,
     {noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
@@ -274,7 +277,10 @@ call(message, Fun, #received_packet{raw_packet=Raw}=Pkt, #erim_state{client=Mod,
 
 respond(#xmlel{}=Req, #erim_state{session=Session}, Code) ->
     Err = exmpp_iq:error(Req, Code),
-    exmpp_session:send_packet(Session, Err).
+    case is_pid(Session) of
+        true     -> exmpp_session:send_packet(Session, Err);
+        _ -> send_sock(Session, Err)
+    end.
 
 init_session(Opts, #erim_state{creds={Jid, Passwd}}=S) ->
     Session = exmpp_session:start(),
@@ -316,16 +322,61 @@ init_local(Opts, #erim_state{}=S) ->
 init_advertisement(Opts, #erim_state{creds={local, Jid}, client=Client, state=CS, caps=Caps}=S) ->
     dnssd:start(),
     Name = proplists:get_value(name, Opts, ?ERIM_CLIENT_ID),
+    JidL = proplists:get_value(jid, Opts, ?ERIM_CLIENT_ID),
+    exmpp_dns:register_dnssd(JidL,""),
     Pres = case Client:initial_presence(CS) of
 	       {#erim_presence{}=P, _CS2} -> P;
 	       ignore -> #erim_presence{}
-	   end,
+	       end,
     Txt = exmpp_presence:get_txt(proplists:get_value(node, Opts, S#erim_state.node),
 				 Jid, Pres, Caps),
     lager:debug("Advertising ~s: ~p~n", [Name, Txt]),
-    exmpp_dns:register_dnssd(Name, Txt),
-    dnssd:stop(),
-    {ok, S}.
+    {Sock, JidLoc} = server(JidL),
+    State = S#erim_state{session=Sock},
+    spawn_link(?MODULE,loop,[Sock, State, JidLoc]),
+    {ok, State}.
+
+send_sock(Sock, Packet) ->
+    Test = exmpp_xml:node_to_binary(Packet, "jabber:client", "http://schemas.ogf.org/occi-xmpp"),
+    lager:debug("Packet receive  ~p~n", [Test]),
+    gen_tcp:send(Sock, Test).
+
+server(JidL) ->
+    {ok, LSock} = gen_tcp:listen(5562, [binary, {packet, raw}, 
+                                        {active, false}, {reuseaddr, true}]),
+    {ok, Sock} = gen_tcp:accept(LSock),
+    Jid = do_recv(Sock, JidL),   
+    {Sock, Jid}.
+
+loop(Sock, State, Jid) ->
+    [H | T] = binary:split(Jid, [<<"@">>]),
+    case gen_tcp:recv(Sock, 0) of
+        {ok, B} ->  lager:debug("Element  ~p~n", [B]),
+                    [B1 | _T] = exmpp_xml:parse_document(B),
+                    B2 = #received_packet{packet_type=iq, queryns='http://schemas.ogf.org/occi-xmpp', 
+                                          from={H, T, <<"">>},
+                                          raw_packet= B1},
+                    lager:debug("Received Packet  ~p~n", [B2]),
+                    handle_info(B2, State),                    
+                    loop(Sock, State, Jid);
+        {error, Error} ->
+            lager:debug("Error  ~p~n", [Error]),
+            {ok, <<"error">>}
+    end.
+
+do_recv(Sock, JidL) ->
+    case gen_tcp:recv(Sock, 0) of
+        {ok, B} ->  [B1 | _T] = exmpp_xml:parse_document_fragment(B),
+                    Jid = exmpp_xml:get_attribute(B1, <<"from">>, "not found"),
+                    lager:debug("Jid connect ~p~n", [Jid]),
+                    NJid = list_to_binary(JidL),
+                    EL2 = << <<"<stream:stream xmlns='jabber:client' from='">>/binary, NJid/binary, <<"' to='">>/binary, Jid/binary, <<"' version='1.0'  xmlns:stream='http://etherx.jabber.org/streams'>">>/binary >>,
+                    lager:debug("Binary ~p~n", [EL2]),
+                    gen_tcp:send(Sock, EL2),
+                    Jid;
+        {error, _Error} ->
+            {ok, <<"error">>}
+    end.
 
 init_handler(Opts, #erim_state{}=S) ->
     case proplists:get_value(client, Opts) of
