@@ -54,7 +54,7 @@
 %% API
 -export([start_link/2,
 	 start_link/3,
-	 send/2, loop/3]).
+	 send/2, server/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -202,6 +202,7 @@ handle_info(_Info, State) ->
 %% @end
 %%--------------------------------------------------------------------
 terminate(_Reason, _State) ->
+    dnssd:stop(),
     ok.
 
 %%--------------------------------------------------------------------
@@ -325,28 +326,27 @@ init_advertisement(Opts, #erim_state{creds={local, Jid}, client=Client, state=CS
     JidL = proplists:get_value(jid, Opts, ?ERIM_CLIENT_ID),
     exmpp_dns:register_dnssd(JidL,""),
     Pres = case Client:initial_presence(CS) of
-	       {#erim_presence{}=P, _CS2} -> P;
-	       ignore -> #erim_presence{}
-	       end,
+               {#erim_presence{}=P, _CS2} -> P;
+               ignore -> #erim_presence{}
+           end,
     Txt = exmpp_presence:get_txt(proplists:get_value(node, Opts, S#erim_state.node),
 				 Jid, Pres, Caps),
     lager:debug("Advertising ~s: ~p~n", [Name, Txt]),
-    {Sock, JidLoc} = server(JidL),
-    State = S#erim_state{session=Sock},
-    spawn_link(?MODULE,loop,[Sock, State, JidLoc]),
-    {ok, State}.
+    spawn_link(?MODULE, server, [JidL, S]),
+    {ok, S}.
 
 send_sock(Sock, Packet) ->
     Test = exmpp_xml:node_to_binary(Packet, "jabber:client", "http://schemas.ogf.org/occi-xmpp"),
-    lager:debug("Packet receive  ~p~n", [Test]),
+    lager:info("Packet receive  ~p~n", [Test]),
     gen_tcp:send(Sock, Test).
 
-server(JidL) ->
+server(JidL, State) ->
     {ok, LSock} = gen_tcp:listen(5562, [binary, {packet, raw}, 
                                         {active, false}, {reuseaddr, true}]),
     {ok, Sock} = gen_tcp:accept(LSock),
-    Jid = do_recv(Sock, JidL),   
-    {Sock, Jid}.
+    Jid = do_recv(Sock, JidL), 
+    State1 = State#erim_state{session=Sock},
+    loop(Sock, State1, Jid).
 
 loop(Sock, State, Jid) ->
     [H | T] = binary:split(Jid, [<<"@">>]),
