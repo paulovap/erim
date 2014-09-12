@@ -90,7 +90,7 @@ init(_Args) ->
 	       },
     {ok, {{one_for_one, 10, 1}, [
 				 Stringprep,
-				 XML,
+				 TLS,
 				 Compress
 				]
 	 }}.
