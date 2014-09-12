@@ -186,7 +186,7 @@ terminate(Reason, _StateName, #state{connection_ref = undefined,
 				     stream_ref = StreamRef,
 				     from_pid=From}) ->
     exmpp_xmlstream:stop(StreamRef),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
     reply(Reason, From),
     ok;
 terminate(Reason, _StateName, #state{connection_ref = ConnRef,
@@ -202,7 +202,7 @@ terminate(Reason, _StateName, #state{connection_ref = ConnRef,
 				     receiver_ref = ReceiverRef,
 				     from_pid=From}) ->
     exmpp_xmlstream:stop(StreamRef),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
     Module:close(ConnRef, ReceiverRef),
     reply(Reason, From),
     ok.
@@ -279,7 +279,7 @@ wait_for_stream(Start = ?stream, State = #state{connection = _Module,
 						auth_method = _Auth,
 						from_pid = From}) ->
     %% Get StreamID
-    StreamId = exmpp_xml:get_attribute_as_list(Start#xmlstreamstart.element, <<"id">>, ""),
+    StreamId = erim_xml:get_attribute_as_list(Start#xmlstreamstart.element, <<"id">>, ""),
     gen_fsm:reply(From, StreamId),
     {next_state, stream_opened, State#state{from_pid=undefined,
 					    stream_id = StreamId}}.
@@ -454,7 +454,7 @@ connect(Module, Params, Domain, From, #state{client_pid=_ClientPid} = State) ->
 %% Start parser and return stream reference
 start_parser() ->
     exmpp_xmlstream:start({gen_fsm, self()},
-                          exmpp_xml:start_parser(?PARSER_OPTIONS),
+                          erim_xml:start_parser(?PARSER_OPTIONS),
                           [{xmlstreamstart,new}]).
 
 %% Packet processing functions
@@ -516,22 +516,22 @@ do_process_iq(ClientPid, Attrs, Packet) ->
 %% This function uses {@link random:uniform/1}. It's up to the caller to
 %% seed the generator.
 check_id(Attrs) ->
-    case exmpp_xml:get_attribute_from_list_as_binary(Attrs, <<"id">>, <<>>) of
+    case erim_xml:get_attribute_from_list_as_binary(Attrs, <<"id">>, <<>>) of
 	<<>> ->
 	    Id = exmpp_utils:random_id("Component"),
-	    {exmpp_xml:set_attribute_in_list(Attrs, <<"id">>, Id), Id};
+	    {erim_xml:set_attribute_in_list(Attrs, <<"id">>, Id), Id};
         Id -> {Attrs, Id}
     end.
 
 %% Try getting a given atribute from a list of xmlattr records
 %% Return default value if attribute is not found
 get_attribute_value(Attrs, Attr, Default) ->
-    exmpp_xml:get_attribute_from_list_as_list(Attrs, Attr, Default).
+    erim_xml:get_attribute_from_list_as_list(Attrs, Attr, Default).
 
 %% Internal operations
 %% send_packet: actually format and send the packet:
 send_packet(#xmlel{name=iq, attrs=Attrs}=IQElement, Module, ConnRef) ->
-    Type = exmpp_xml:get_attribute_from_list_as_binary(Attrs, <<"type">>, undefined),
+    Type = erim_xml:get_attribute_from_list_as_binary(Attrs, <<"type">>, undefined),
     case Type of
 	<<"error">> ->
 	    {Attrs2, PacketId} = check_id(Attrs),

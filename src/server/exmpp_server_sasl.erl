@@ -48,7 +48,7 @@
 
 %% @spec (Mechanisms) -> Feature
 %%     Mechanisms = [binary() | string()]
-%%     Feature = exmpp_xml:xmlel()
+%%     Feature = erim_xml:xmlel()
 %% @throws {sasl, feature_announcement, invalid_mechanisms_list, []} |
 %%         {sasl, feature_announcement, invalid_mechanism, Mechanism}
 %% @doc Make a feature announcement child.
@@ -74,7 +74,7 @@ mechanisms_list2([Mechanism | Rest], Children) ->
 			   name = 'mechanism'
 			  },
             mechanisms_list2(Rest,
-			     [exmpp_xml:set_cdata(Child, Mechanism)
+			     [erim_xml:set_cdata(Child, Mechanism)
 			      | Children]);
         false ->
             throw({sasl, feature_announcement, invalid_mechanism, Mechanism})
@@ -105,7 +105,7 @@ standard_conditions() ->
 
 %% @spec (Challenge) -> Challenge_El
 %%     Challenge = string() | none
-%%     Challenge_El = exmpp_xml:xmlel()
+%%     Challenge_El = erim_xml:xmlel()
 %% @doc Prepare a `<challenge/>' element with the given challenge.
 %%
 %% `Challenge' will be Base64-encoded by this function.
@@ -118,10 +118,10 @@ challenge(Challenge) ->
     El = #xmlel{ns = ?NS_SASL,
 		name = 'challenge'
 	       },
-    exmpp_xml:set_cdata(El, base64:encode_to_string(Challenge)).
+    erim_xml:set_cdata(El, base64:encode_to_string(Challenge)).
 
 %% @spec () -> Success_El
-%%     Success_El = exmpp_xml:xmlel()
+%%     Success_El = erim_xml:xmlel()
 %% @doc Prepare a `<success/>' element.
 
 success() ->
@@ -129,7 +129,7 @@ success() ->
 
 %% @spec (Data) -> Success_El
 %%     Data = string() | none
-%%     Success_El = exmpp_xml:xmlel()
+%%     Success_El = erim_xml:xmlel()
 %% @doc Prepare a `<success/>' element with supplied XML character data.
 %% `Data' will be Base64-encoded by this function.
 
@@ -141,10 +141,10 @@ success(Data) ->
     El = #xmlel{ns = ?NS_SASL,
 		name = 'success'
 	       },
-    exmpp_xml:set_cdata(El, base64:encode_to_string(Data)).
+    erim_xml:set_cdata(El, base64:encode_to_string(Data)).
 
 %% @spec () -> Failure
-%%     Failure = exmpp_xml:xmlel()
+%%     Failure = erim_xml:xmlel()
 %% @doc Prepare a `<failure/>' element.
 
 failure() ->
@@ -154,7 +154,7 @@ failure() ->
 
 %% @spec (Condition) -> Failure
 %%     Condition = atom()
-%%     Failure = exmpp_xml:xmlel()
+%%     Failure = erim_xml:xmlel()
 %% @doc Prepare a `<failure/>' element with a defined condition.
 
 failure(Condition) ->
@@ -165,12 +165,12 @@ failure(Condition) ->
     Condition_El = #xmlel{ns = ?NS_SASL,
 			  name = Condition
 			 },
-    exmpp_xml:append_child(failure(), Condition_El).
+    erim_xml:append_child(failure(), Condition_El).
 
 %% @spec (Condition, Text) -> Failure
 %%     Condition = atom()
 %%     Text = string()
-%%     Failure = exmpp_xml:xmlel()
+%%     Failure = erim_xml:xmlel()
 %% @doc Prepare a `<failure/>' element with a defined condition and text.
 
 failure(Condition, "") ->
@@ -185,12 +185,12 @@ failure(Condition, Text) ->
 			 },
     Text_El = #xmlel{ns = ?NS_SASL,
 			  name = text,
-			  children = exmpp_xml:cdata(Text)
+			  children = erim_xml:cdata(Text)
 			 },
-    exmpp_xml:append_children(failure(), [Condition_El, Text_El]).
+    erim_xml:append_children(failure(), [Condition_El, Text_El]).
 
 %% @spec (El) -> Type
-%%     El = exmpp_xml:xmlel()
+%%     El = erim_xml:xmlel()
 %%     Type = Auth | Response | Abort
 %%     Auth = {auth, Mechanism, none | string()}
 %%     Mechanism = string()
@@ -202,14 +202,14 @@ failure(Condition, Text) ->
 %% Any response data is Base64-decoded.
 
 next_step(#xmlel{ns = ?NS_SASL, name = 'auth'} = El) ->
-    Mechanism = exmpp_xml:get_attribute_as_list(El, <<"mechanism">>, undefined),
-    case exmpp_utils:strip(exmpp_xml:get_cdata_as_list(El)) of
+    Mechanism = erim_xml:get_attribute_as_list(El, <<"mechanism">>, undefined),
+    case exmpp_utils:strip(erim_xml:get_cdata_as_list(El)) of
         ""      -> {auth, Mechanism, none};
         "="     -> {auth, Mechanism, ""};
         Encoded -> {auth, Mechanism, base64:decode_to_string(Encoded)}
     end;
 next_step(#xmlel{ns = ?NS_SASL, name = 'response'} = El) ->
-    Encoded = exmpp_xml:get_cdata_as_list(El),
+    Encoded = erim_xml:get_cdata_as_list(El),
     {response, base64:decode_to_string(Encoded)};
 next_step(#xmlel{ns = ?NS_SASL, name = 'abort'}) ->
     abort;

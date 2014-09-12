@@ -190,7 +190,7 @@
 %%     Version = binary() | string() | {Major, Minor}
 %%     Major = integer()
 %%     Minor = integer()
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %% @doc Make a `<stream>' opening tag.
 %%
 %% @see opening/4.
@@ -210,7 +210,7 @@ opening(To, Default_NS, Version) ->
 %%     Major = integer()
 %%     Minor = integer()
 %%     Lang = binary() | string() | undefined
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %% @doc Make a `<stream>' opening tag.
 %%
 %% This element is supposed to be sent by the initiating entity
@@ -245,7 +245,7 @@ opening(To, Default_NS, Version, Lang) ->
 %%     Major = integer()
 %%     Minor = integer()
 %%     ID = binary() | string() | undefined
-%%     Opening_Reply = exmpp_xml:xmlel()
+%%     Opening_Reply = erim_xml:xmlel()
 %% @doc Make a `<stream>' opening reply tag.
 %%
 %% @see opening_reply/5.
@@ -266,7 +266,7 @@ opening_reply(From, Default_NS, Version, ID) ->
 %%     Minor = integer()
 %%     ID = binary() | string() | random
 %%     Lang = binary() | string() | undefined
-%%     Opening_Reply = exmpp_xml:xmlel()
+%%     Opening_Reply = erim_xml:xmlel()
 %% @doc Make a `<stream>' opening reply tag.
 %%
 %% This element is supposed to be sent by the receiving entity in reply
@@ -299,9 +299,9 @@ opening_reply(From, Default_NS, Version, ID, Lang) ->
 	  }.
 
 %% @spec (Opening, ID) -> Opening_Reply
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     ID = binary() | string() | random
-%%     Opening_Reply = exmpp_xml:xmlel()
+%%     Opening_Reply = erim_xml:xmlel()
 %% @doc Make a `<stream>' opening reply tag for the given `Opening' tag.
 %%
 %% This element is supposed to be sent by the receiving entity in reply
@@ -319,10 +319,10 @@ opening_reply(#xmlel{attrs = Attrs} = Opening, ID) ->
     Opening#xmlel{attrs = Attrs2}.
 
 %% @spec (Opening, ID, Lang) -> Opening_Reply
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     ID = binary() | string() | random
 %%     Lang = binary() | string() | undefined
-%%     Opening_Reply = exmpp_xml:xmlel()
+%%     Opening_Reply = erim_xml:xmlel()
 %% @doc Make a `<stream>' opening reply tag for the given `Opening' tag.
 %%
 %% This element is supposed to be sent by the receiving entity in reply
@@ -345,7 +345,7 @@ opening_reply(#xmlel{attrs = Attrs} = Opening, ID, Lang) ->
     Opening#xmlel{attrs = Attrs3}.
 
 %% @spec () -> Closing
-%%     Closing = exmpp_xml:xmlendtag()
+%%     Closing = erim_xml:xmlendtag()
 %% @doc Make a `</stream>' closing tag.
 
 -spec closing
@@ -355,8 +355,8 @@ closing() ->
     #xmlendtag{ns = ?NS_XMPP, name = 'stream'}.
 
 %% @spec (Opening) -> Closing
-%%     Opening = exmpp_xml:xmlel()
-%%     Closing = exmpp_xml:xmlendtag()
+%%     Opening = erim_xml:xmlel()
+%%     Closing = erim_xml:xmlendtag()
 %% @doc Make a `</stream>' closing tag for the given `Opening' tag.
 
 -spec closing
@@ -370,7 +370,7 @@ closing(#xmlel{ns = NS, name = Name}) ->
 %% --------------------------------------------------------------------
 
 %% @spec (Opening) -> Hostname | undefined
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Hostname = binary()
 %% @doc Return the receiving entity hostname.
 
@@ -378,12 +378,12 @@ closing(#xmlel{ns = NS, name = Name}) ->
 (xmlel()) -> binary() | undefined.
 
 get_receiving_entity(Opening) ->
-    exmpp_xml:get_attribute_as_binary(Opening, <<"to">>, undefined).
+    erim_xml:get_attribute_as_binary(Opening, <<"to">>, undefined).
 
 %% @spec (Opening, Hostname) -> New_Opening
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Hostname = binary() | string()
-%%     New_Opening = exmpp_xml:xmlel()
+%%     New_Opening = erim_xml:xmlel()
 %% @doc Set the receiving entity in the `to' attribute.
 
 -spec set_receiving_entity
@@ -396,10 +396,10 @@ set_receiving_entity(#xmlel{attrs = Attrs} = Opening, Hostname) ->
 set_receiving_entity_in_attrs(Attrs, undefined) ->
     Attrs;
 set_receiving_entity_in_attrs(Attrs, Hostname) ->
-    exmpp_xml:set_attribute_in_list(Attrs, <<"to">>, Hostname).
+    erim_xml:set_attribute_in_list(Attrs, <<"to">>, Hostname).
 
 %% @spec (Opening) -> Hostname | undefined
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Hostname = binary()
 %% @doc Return the initiating entity hostname.
 
@@ -407,12 +407,12 @@ set_receiving_entity_in_attrs(Attrs, Hostname) ->
 (xmlel()) -> binary() | undefined.
 
 get_initiating_entity(Opening) ->
-    exmpp_xml:get_attribute_as_binary(Opening, <<"from">>, undefined).
+    erim_xml:get_attribute_as_binary(Opening, <<"from">>, undefined).
 
 %% @spec (Opening, Hostname) -> New_Opening
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Hostname = binary() | string()
-%%     New_Opening = exmpp_xml:xmlel()
+%%     New_Opening = erim_xml:xmlel()
 %% @doc Set the initiating entity in the `from' attribute.
 
 -spec set_initiating_entity
@@ -425,10 +425,10 @@ set_initiating_entity(#xmlel{attrs = Attrs} = Opening, Hostname) ->
 set_initiating_entity_in_attrs(Attrs, undefined) ->
     Attrs;
 set_initiating_entity_in_attrs(Attrs, Hostname) ->
-    exmpp_xml:set_attribute_in_list(Attrs, <<"from">>, Hostname).
+    erim_xml:set_attribute_in_list(Attrs, <<"from">>, Hostname).
 
 %% @spec (Opening) -> Default_NS | undefined
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Default_NS = atom() | string()
 %% @doc Return the default namespace.
 %%
@@ -444,9 +444,9 @@ get_default_ns(#xmlel{declared_ns = Declared_NS} = _Opening) ->
     end.
 
 %% @spec (Opening, NS) -> New_Opening
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     NS = atom() | string()
-%%     New_Opening = exmpp_xml:xmlel()
+%%     New_Opening = erim_xml:xmlel()
 %% @doc Set the default namespace.
 %%
 %% XMPP-IM defines `jabber:client' and `jabber:server'.
@@ -458,7 +458,7 @@ set_default_ns(#xmlel{declared_ns = Declared_NS} = Opening, NS) ->
     Opening#xmlel{declared_ns = [{NS, none} | Declared_NS]}.
 
 %% @spec (Opening) -> Version
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Version = {Major, Minor}
 %%     Major = integer()
 %%     Minor = integer()
@@ -468,14 +468,14 @@ set_default_ns(#xmlel{declared_ns = Declared_NS} = Opening, NS) ->
 (xmlel()) -> streamversion().
 
 get_version(Opening) ->
-    parse_version(exmpp_xml:get_attribute_as_binary(Opening, <<"version">>, <<>>)).
+    parse_version(erim_xml:get_attribute_as_binary(Opening, <<"version">>, <<>>)).
 
 %% @spec (Opening, Version) -> New_Opening
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Version = binary() | string() | {Major, Minor} | undefined
 %%     Major = integer()
 %%     Minor = integer()
-%%     New_Opening = exmpp_xml:xmlel()
+%%     New_Opening = erim_xml:xmlel()
 %% @doc Set the protocol version.
 
 -spec set_version
@@ -488,15 +488,15 @@ set_version(#xmlel{attrs = Attrs} = Opening, Version) ->
 set_version_in_attrs(Attrs, Version)
   when Version == undefined;
 Version == ""; Version == <<>>; Version == {0, 0} ->
-    exmpp_xml:remove_attribute_from_list(Attrs, <<"version">>);
+    erim_xml:remove_attribute_from_list(Attrs, <<"version">>);
 set_version_in_attrs(Attrs, {_, _} = Version) ->
     Version_B = serialize_version(Version),
     set_version_in_attrs(Attrs, Version_B);
 set_version_in_attrs(Attrs, Version) ->
-    exmpp_xml:set_attribute_in_list(Attrs, <<"version">>, Version).
+    erim_xml:set_attribute_in_list(Attrs, <<"version">>, Version).
 
 %% @spec (Opening) -> ID | undefined
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     ID = binary()
 %% @doc Return the stream ID.
 
@@ -504,12 +504,12 @@ set_version_in_attrs(Attrs, Version) ->
 (xmlel()) -> binary() | undefined.
 
 get_id(Opening) ->
-    exmpp_xml:get_attribute_as_binary(Opening, <<"id">>, undefined).
+    erim_xml:get_attribute_as_binary(Opening, <<"id">>, undefined).
 
 %% @spec (Opening, ID) -> New_Opening
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     ID = binary() | string() | random
-%%     New_Opening = exmpp_xml:xmlel()
+%%     New_Opening = erim_xml:xmlel()
 %% @doc Set the stream ID.
 
 -spec set_id
@@ -522,10 +522,10 @@ set_id(#xmlel{attrs = Attrs} = Opening, ID) ->
 set_id_in_attrs(Attrs, ID) when ID == random; ID == <<>>; ID == "" ->
     set_id_in_attrs(Attrs, exmpp_utils:random_id("stream"));
 set_id_in_attrs(Attrs, ID) ->
-    exmpp_xml:set_attribute_in_list(Attrs, <<"id">>, ID).
+    erim_xml:set_attribute_in_list(Attrs, <<"id">>, ID).
 
 %% @spec (Opening) -> Lang | undefined
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Lang = binary()
 %% @doc Return the language of the stream.
 
@@ -533,12 +533,12 @@ set_id_in_attrs(Attrs, ID) ->
 (xmlel()) -> binary() | undefined.
 
 get_lang(Opening) ->
-    exmpp_xml:get_attribute_as_binary(Opening, ?NS_XML, <<"lang">>, undefined).
+    erim_xml:get_attribute_as_binary(Opening, ?NS_XML, <<"lang">>, undefined).
 
 %% @spec (Opening, Lang) -> New_Opening
-%%     Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
 %%     Lang = binary() | string()
-%%     New_Opening = exmpp_xml:xmlel()
+%%     New_Opening = erim_xml:xmlel()
 %% @doc Set the default language.
 
 -spec set_lang
@@ -549,7 +549,7 @@ set_lang(#xmlel{attrs = Attrs} = Opening, Lang) ->
     Opening#xmlel{attrs = New_Attrs}.
 
 set_lang_in_attrs(Attrs, Lang) ->
-    exmpp_xml:set_attribute_in_list(Attrs, ?NS_XML, <<"lang">>, Lang).
+    erim_xml:set_attribute_in_list(Attrs, ?NS_XML, <<"lang">>, Lang).
 
 %% --------------------------------------------------------------------
 %% Version handling.
@@ -606,19 +606,19 @@ serialize_version({Major, Minor}) ->
 %% --------------------------------------------------------------------
 
 %% @spec (Opening) -> New_Opening
-%%     Opening = exmpp_xml:xmlel()
-%%     New_Opening = exmpp_xml:xmlel()
+%%     Opening = erim_xml:xmlel()
+%%     New_Opening = erim_xml:xmlel()
 %% @doc Declare server diablack support.
 
 -spec set_dialback_support
 (xmlel()) -> xmlel().
 
 set_dialback_support(Opening) ->
-    exmpp_xml:declare_ns_here(Opening, ?NS_DIALBACK, ?NS_DIALBACK_pfx).
+    erim_xml:declare_ns_here(Opening, ?NS_DIALBACK, ?NS_DIALBACK_pfx).
 
 %% @spec (Features) -> Features_Announcement
-%%     Features = [exmpp_xml:xmlel()]
-%%     Features_Announcement = exmpp_xml:xmlel()
+%%     Features = [erim_xml:xmlel()]
+%%     Features_Announcement = erim_xml:xmlel()
 %% @doc Make the features annoucement element.
 
 -spec features
@@ -669,7 +669,7 @@ standard_conditions() ->
 
 %% @spec (Condition) -> Stream_Error
 %%     Condition = atom()
-%%     Stream_Error = exmpp_xml:xmlel()
+%%     Stream_Error = erim_xml:xmlel()
 %% @doc Make a standard `<stream:error>' element based on the given
 %% `Condition'.
 
@@ -681,7 +681,7 @@ error(Condition) ->
 
 %% @spec (Condition, {Lang, Text}) -> Stream_Error
 %%     Condition = atom()
-%%     Stream_Error = exmpp_xml:xmlel()
+%%     Stream_Error = erim_xml:xmlel()
 %%     Lang = binary() | string() | undefined
 %%     Text = binary() | string() | undefined
 %% @doc Make a standard `<stream:error>' element based on the given
@@ -708,7 +708,7 @@ error(Condition, {Lang, Text}) ->
         undefined ->
             Error_El0;
         _ ->
-            TextChildren = [exmpp_xml:cdata(Text)],
+            TextChildren = [erim_xml:cdata(Text)],
             Text_El0 = #xmlel{ns = ?NS_STREAM_ERRORS,
 			      name = 'text',
 			      children = TextChildren
@@ -717,14 +717,14 @@ error(Condition, {Lang, Text}) ->
 			  undefined ->
 			      Text_El0;
 			  _ ->
-			      exmpp_xml:set_attribute(Text_El0, ?NS_XML,
+			      erim_xml:set_attribute(Text_El0, ?NS_XML,
 						      <<"lang">>, Lang)
 		      end,
-            exmpp_xml:append_child(Error_El0, Text_El)
+            erim_xml:append_child(Error_El0, Text_El)
     end.
 
 %% @spec (XML_El) -> boolean()
-%%     XML_El = exmpp_xml:xmlel()
+%%     XML_El = erim_xml:xmlel()
 %% @doc Tell if this element is a stream error.
 
 -spec is_error
@@ -736,7 +736,7 @@ is_error(_) ->
     false.
 
 %% @spec (Stream_Error) -> Condition | undefined
-%%     Stream_Error = exmpp_xml:xmlel()
+%%     Stream_Error = erim_xml:xmlel()
 %%     Condition = atom()
 %% @doc Return the child element name corresponding to the stanza error
 %% condition.
@@ -745,7 +745,7 @@ is_error(_) ->
 (xmlel()) -> atom() | undefined.
 
 get_condition(#xmlel{ns = ?NS_XMPP, name = 'error'} = El) ->
-    case exmpp_xml:get_element_by_ns(El, ?NS_STREAM_ERRORS) of
+    case erim_xml:get_element_by_ns(El, ?NS_STREAM_ERRORS) of
         undefined ->
 	    %% This <stream:error/> element is invalid because the
 	    %% condition must be present (and first).
@@ -760,7 +760,7 @@ get_condition(#xmlel{ns = ?NS_XMPP, name = 'error'} = El) ->
     end.
 
 %% @spec (Stream_Error) -> Text | undefined
-%%     Stream_Error = exmpp_xml:xmlel()
+%%     Stream_Error = erim_xml:xmlel()
 %%     Text = binary()
 %% @doc Return the text that describes the error.
 
@@ -768,9 +768,9 @@ get_condition(#xmlel{ns = ?NS_XMPP, name = 'error'} = El) ->
 (xmlel()) -> binary() | undefined.
 
 get_text(#xmlel{ns = ?NS_XMPP, name = 'error'} = El) ->
-    case exmpp_xml:get_element(El, ?NS_STREAM_ERRORS, 'text') of
+    case erim_xml:get_element(El, ?NS_STREAM_ERRORS, 'text') of
         undefined -> undefined;
-        Text      -> exmpp_xml:get_cdata(Text)
+        Text      -> erim_xml:get_cdata(Text)
     end.
 
 %% --------------------------------------------------------------------
@@ -778,7 +778,7 @@ get_text(#xmlel{ns = ?NS_XMPP, name = 'error'} = El) ->
 %% --------------------------------------------------------------------
 
 %% @spec (El) -> XML_Text
-%%     El = exmpp_xml:xmlel() | list()
+%%     El = erim_xml:xmlel() | list()
 %%     XML_Text = string()
 %% @doc Serialize a stream opening/closing.
 
@@ -786,10 +786,10 @@ get_text(#xmlel{ns = ?NS_XMPP, name = 'error'} = El) ->
 (xmlel() | [xmlel()]) -> string().
 
 to_list(El) ->
-    exmpp_xml:document_to_list(El).
+    erim_xml:document_to_list(El).
 
 %% @spec (El) -> XML_Text
-%%     El = exmpp_xml:xmlel() | list()
+%%     El = erim_xml:xmlel() | list()
 %%     XML_Text = binary()
 %% @doc Serialize a stream opening/closing.
 
@@ -797,10 +797,10 @@ to_list(El) ->
 (xmlel() | [xmlel()]) -> binary().
 
 to_binary(El) ->
-    exmpp_xml:document_to_binary(El).
+    erim_xml:document_to_binary(El).
 
 %% @spec (El) -> XML_Text
-%%     El = exmpp_xml:xmlel() | list()
+%%     El = erim_xml:xmlel() | list()
 %%     XML_Text = iolist()
 %% @doc Serialize a stream opening/closing.
 
@@ -808,4 +808,4 @@ to_binary(El) ->
 (xmlel() | [xmlel()]) -> iolist().
 
 to_iolist(El) ->
-    exmpp_xml:document_to_iolist(El).
+    erim_xml:document_to_iolist(El).

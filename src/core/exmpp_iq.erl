@@ -69,8 +69,8 @@
 %%     Type = get | set | result | error
 %%     ID = binary() | undefined
 %%     NS = atom() | string() | undefined
-%%     Payload = exmpp_xml:xmlel() | undefined
-%%     Error = exmpp_xml:xmlel() | undefined
+%%     Payload = erim_xml:xmlel() | undefined
+%%     Error = erim_xml:xmlel() | undefined
 %%     Lang = binary() | undefined
 %%     IQ_NS = atom() | string() | undefined.
 %% Record representing an IQ stanza.
@@ -86,8 +86,8 @@
 
 %% @spec (NS, Request) -> IQ
 %%     NS = atom()
-%%     Request = exmpp_xml:xmlel()
-%%     IQ = exmpp_xml:xmlel()
+%%     Request = erim_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %% @doc Prepare an `<iq/>' to transport the given `get' request.
 
 -spec(get/2 :: (xmlname(), #xmlel{}) -> #xmlel{}).
@@ -97,9 +97,9 @@ get(NS, Request) ->
 
 %% @spec (NS, Request, ID) -> Request_IQ
 %%     NS = atom()
-%%     Request = exmpp_xml:xmlel()
+%%     Request = erim_xml:xmlel()
 %%     ID = binary() | string() | random
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %% @doc Prepare an `<iq/>' to transport the given `get' request.
 
 -spec(get/3 ::
@@ -116,8 +116,8 @@ get(NS, Request, ID) ->
 
 %% @spec (NS, Request) -> Request_IQ
 %%     NS = atom()
-%%     Request = exmpp_xml:xmlel()
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request = erim_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %% @doc Prepare an `<iq/>' to transport the given `set' request.
 
 -spec(set/2 :: (xmlname(), #xmlel{}) -> #xmlel{}).
@@ -127,9 +127,9 @@ set(NS, Request) ->
 
 %% @spec (NS, Request, ID) -> Request_IQ
 %%     NS = atom()
-%%     Request = exmpp_xml:xmlel()
+%%     Request = erim_xml:xmlel()
 %%     ID = binary() | string() | random
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %% @doc Prepare an `<iq/>' to transport the given `set' request.
 
 -spec(set/3 ::
@@ -145,8 +145,8 @@ set(NS, Request, ID) ->
 	  }.
 
 %% @spec (Request_IQ) -> Response_IQ
-%%     Request_IQ = exmpp_xml:xmlel() | iq()
-%%     Response_IQ = exmpp_xml:xmlel() | iq()
+%%     Request_IQ = erim_xml:xmlel() | iq()
+%%     Response_IQ = erim_xml:xmlel() | iq()
 %% @doc Prepare an `<iq/>' to answer to the given request.
 
 -spec(result/1 :: (#xmlel{} | #iq{}) -> #xmlel{} | #iq{}).
@@ -166,23 +166,23 @@ result(Request_IQ_Rec) when ?IS_IQ_RECORD(Request_IQ_Rec) ->
 		     }.
 
 %% @spec (Request_IQ, Result) -> Response_IQ
-%%     Request_IQ = exmpp_xml:xmlel() | iq()
-%%     Result = exmpp_xml:xmlel()
-%%     Response_IQ = exmpp_xml:xmlel() | iq()
+%%     Request_IQ = erim_xml:xmlel() | iq()
+%%     Result = erim_xml:xmlel()
+%%     Response_IQ = erim_xml:xmlel() | iq()
 %% @doc Prepare an `<iq/>' to answer to the given request with `Result'.
 
 -spec(result/2 :: (#xmlel{} | #iq{}, #xmlel{}) -> #xmlel{} | #iq{}).
 
 result(Request_IQ, Result) when ?IS_IQ(Request_IQ) ->
-    exmpp_xml:set_children(result(Request_IQ), [Result]);
+    erim_xml:set_children(result(Request_IQ), [Result]);
 result(Request_IQ_Rec, Result) when ?IS_IQ_RECORD(Request_IQ_Rec) ->
     Result_IQ_Rec = result(Request_IQ_Rec),
     Result_IQ_Rec#iq{ns = Result#xmlel.ns, payload = Result}.
 
 %% @spec (Request_IQ, Error) -> Response_IQ
-%%     Request_IQ = exmpp_xml:xmlel() | iq()
-%%     Error = exmpp_xml:xmlel() | atom()
-%%     Response_IQ = exmpp_xml:xmlel() | iq()
+%%     Request_IQ = erim_xml:xmlel() | iq()
+%%     Error = erim_xml:xmlel() | atom()
+%%     Response_IQ = erim_xml:xmlel() | iq()
 %% @doc Prepare an `<iq/>' to notify an error.
 %%
 %% If `Error' is an atom, it must be a standard condition defined by
@@ -208,10 +208,10 @@ error(IQ_Rec, Error) when ?IS_IQ_RECORD(IQ_Rec) ->
 	     }.
 
 %% @spec (Request_IQ, Condition, Text) -> Response_IQ
-%%     Request_IQ = exmpp_xml:xmlel() | iq()
+%%     Request_IQ = erim_xml:xmlel() | iq()
 %%     Condition = atom()
 %%     Text = string() | binary()
-%%     Response_IQ = exmpp_xml:xmlel() | iq()
+%%     Response_IQ = erim_xml:xmlel() | iq()
 %% @doc Prepare an `<iq/>' to notify an error
 %%      with an error <text/>
 %% If `Error' is an atom, it must be a standard condition defined by
@@ -235,9 +235,9 @@ error(IQ_Rec, Condition, Text)
     error(IQ_Rec, Error).
 
 %% @spec (Request_IQ, Error) -> Response_IQ
-%%     Request_IQ = exmpp_xml:xmlel() | iq()
-%%     Error = exmpp_xml:xmlel() | atom()
-%%     Response_IQ = exmpp_xml:xmlel() | iq()
+%%     Request_IQ = erim_xml:xmlel() | iq()
+%%     Error = erim_xml:xmlel() | atom()
+%%     Response_IQ = erim_xml:xmlel() | iq()
 %% @doc Prepare an `<iq/>' to notify an error.
 %%
 %% Child elements from `Request_IQ' are not kept.
@@ -265,7 +265,7 @@ error_without_original(IQ_Rec, Error) when ?IS_IQ_RECORD(IQ_Rec) ->
 %% --------------------------------------------------------------------
 
 %% @spec (IQ) -> IQ_Rec
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %%     IQ_Rec = iq()
 %% @doc Convert an IQ stanza from its #xmlel form to its #iq form.
 
@@ -302,7 +302,7 @@ xmlel_to_iq(#xmlel{ns = IQ_NS} = IQ) when ?IS_IQ(IQ) ->
 
 %% @spec (IQ_Rec) -> IQ
 %%     IQ_Rec = iq()
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %% @doc Convert an IQ stanza from its #iq form to its #xmlel form.
 
 -spec(iq_to_xmlel/1 :: (#iq{}) -> #xmlel{}).
@@ -314,7 +314,7 @@ iq_to_xmlel(IQ_Rec) when ?IS_IQ_RECORD(IQ_Rec) ->
 %%     IQ_Rec = iq()
 %%     Sender = exmpp_jid:jid() | binary() | string()
 %%     Recipient = exmpp_jid:jid() | binary() | string()
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %% @doc Convert an IQ stanza from its #iq form to its #xmlel form and
 %% set the sender and recipient at the same time.
 
@@ -349,7 +349,7 @@ iq_to_xmlel2(#iq{type = Type, id = ID, lang = Lang, payload = Payload,
 %% --------------------------------------------------------------------
 
 %% @spec (El) -> boolean()
-%%     El = exmpp_xml:xmlel()
+%%     El = erim_xml:xmlel()
 %% @doc Tell if `El' is an IQ.
 %%
 %% You should probably use the `IS_IQ(El)' guard expression.
@@ -371,7 +371,7 @@ is_iq_record(IQ) when ?IS_IQ_RECORD(IQ) -> true;
 is_iq_record(_El)                       -> false.
 
 %% @spec (IQ) -> Type
-%%     IQ = exmpp_xml:xmlel() | iq()
+%%     IQ = erim_xml:xmlel() | iq()
 %%     Type = get | set | result | error | undefined
 %% @doc Return the type of the given `<iq/>'.
 
@@ -390,7 +390,7 @@ get_type(#iq{type = Type}) ->
     Type.
 
 %% @spec (IQ) -> Kind
-%%     IQ = exmpp_xml:xmlel() | iq()
+%%     IQ = erim_xml:xmlel() | iq()
 %%     Kind = request | response | undefined
 %% @doc Tell if an IQ is a request or a response.
 
@@ -409,7 +409,7 @@ get_kind(#iq{kind = Kind}) ->
     Kind.
 
 %% @spec (IQ) -> boolean()
-%%     IQ = exmpp_xml:xmlel() | iq()
+%%     IQ = erim_xml:xmlel() | iq()
 %% @doc Tell if the IQ is a request.
 
 -spec(is_request/1 :: (#xmlel{} | #iq{}) -> boolean()).
@@ -423,7 +423,7 @@ is_request(#iq{kind = Kind}) ->
     Kind == request.
 
 %% @spec (IQ) -> boolean()
-%%     IQ = exmpp_xml:xmlel() | iq()
+%%     IQ = erim_xml:xmlel() | iq()
 %% @doc Tell if the IQ is a response.
 
 -spec(is_response/1 :: (#xmlel{} | #iq{}) -> boolean()).
@@ -437,7 +437,7 @@ is_response(#iq{kind = Kind}) ->
     Kind == response.
 
 %% @spec (IQ) -> boolean()
-%%     IQ = exmpp_xml:xmlel() | iq()
+%%     IQ = erim_xml:xmlel() | iq()
 %% @doc Tell if the IQ is a result (response of type `result').
 
 -spec(is_result/1 :: (#xmlel{} | #iq{}) -> boolean()).
@@ -451,7 +451,7 @@ is_result(#iq{type = Type}) ->
     Type == 'result'.
 
 %% @spec (IQ) -> boolean()
-%%     IQ = exmpp_xml:xmlel() | iq()
+%%     IQ = erim_xml:xmlel() | iq()
 %% @doc Tell if the IQ is an error (response of type `error').
 
 -spec(is_error/1 :: (#xmlel{} | #iq{}) -> boolean()).
@@ -465,8 +465,8 @@ is_error(#iq{type = Type}) ->
     Type == 'error'.
 
 %% @spec (IQ) -> Request | undefined
-%%     IQ = exmpp_xml:xmlel() | iq()
-%%     Request = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel() | iq()
+%%     Request = erim_xml:xmlel()
 %% @throws {iq, get_request, unexpected_iq, IQ} |
 %%         {iq, get_request, invalid_iq, IQ}
 %% @doc Return the request contained in a `get' or `set' IQ, or returned
@@ -482,13 +482,13 @@ get_request(IQ) when ?IS_IQ(IQ) ->
 	    %% We take the first child element. Note that the RFC says
 	    %% that this child element MUST be the only one! This doesn't
 	    %% take into account text nodes.
-            [Request | _] = exmpp_xml:get_child_elements(IQ),
+            [Request | _] = erim_xml:get_child_elements(IQ),
             Request;
         'result' ->
             throw({iq, get_request, unexpected_iq, IQ});
         'error' ->
             NS = IQ#xmlel.ns,
-            [Request | Rest] = exmpp_xml:get_child_elements(IQ),
+            [Request | Rest] = erim_xml:get_child_elements(IQ),
             case Request of
                 #xmlel{ns = NS, name = 'error'} ->
                     case Rest of
@@ -507,8 +507,8 @@ get_request(#iq{} = IQ_Rec) ->
     throw({iq, get_request, unexpected_iq, IQ_Rec}).
 
 %% @spec (IQ) -> Result | undefined
-%%     IQ = exmpp_xml:xmlel() | iq()
-%%     Result = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel() | iq()
+%%     Result = erim_xml:xmlel()
 %% @throws {iq, get_request, unexpected_iq, IQ} |
 %%         {iq, get_result, invalid_iq, IQ}
 %% @doc Return the result contained in a `result' IQ.
@@ -520,7 +520,7 @@ get_result(IQ) when ?IS_IQ(IQ) ->
         undefined ->
             throw({iq, get_result, invalid_iq, IQ});
         'result' ->
-            case exmpp_xml:get_child_elements(IQ) of
+            case erim_xml:get_child_elements(IQ) of
                 [] ->
                     undefined;
                 [Result | _] ->
@@ -535,8 +535,8 @@ get_result(#iq{} = IQ_Rec) ->
     throw({iq, get_result, unexpected_iq, IQ_Rec}).
 
 %% @spec (IQ) -> Payload
-%%     IQ = exmpp_xml:xmlel() | iq()
-%%     Payload = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel() | iq()
+%%     Payload = erim_xml:xmlel()
 %% @throws {iq, get_payload, unexpected_iq, IQ}
 %% @doc Extract the request, the result or the error from `IQ'.
 
@@ -558,6 +558,6 @@ get_payload(IQ) ->
 %%       returns 'undefined' is there is no query element. 
  get_payload_ns_as_atom(IQ) ->
     case get_payload(IQ) of
-        #xmlel{} = Q -> exmpp_xml:get_ns_as_atom(Q);
+        #xmlel{} = Q -> erim_xml:get_ns_as_atom(Q);
         undefined -> undefined
      end.

@@ -31,8 +31,8 @@
 %% --------------------------------------------------------------------
 
 %% @spec (Push_IQ) -> Ack_IQ
-%%     Push_IQ = exmpp_xml:xmlel()
-%%     Ack_IQ = exmpp_xml:xmlel()
+%%     Push_IQ = erim_xml:xmlel()
+%%     Ack_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq/>' result to acknowledge the push.
 
 ack_list_push(Push_IQ) ->

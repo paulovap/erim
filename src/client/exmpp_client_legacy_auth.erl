@@ -140,7 +140,7 @@
 
 %% @spec (To) -> Request_IQ
 %%     To = string()
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' for requesting legacy authentication.
 %%
 %% The stanza ID is generated automatically.
@@ -151,7 +151,7 @@ request(To) ->
 %% @spec (To, ID) -> Request_IQ
 %%     To = string()
 %%     ID = string()
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' for requesting legacy authentication.
 
 request(To, ID) ->
@@ -165,7 +165,7 @@ request(To, ID) ->
 %% @spec (To, Username) -> Request_IQ
 %%     To = string()
 %%     Username = string()
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' for requesting legacy authentication.
 %%
 %% The stanza ID is generated automatically.
@@ -177,11 +177,11 @@ request_with_user(To, Username) ->
 %%     To = string()
 %%     Username = string()
 %%     ID = string()
-%%     Response_IQ = exmpp_xml:xmlel()
+%%     Response_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' for requesting legacy authentication.
 
 request_with_user(To, Username, ID) ->
-    Username_El = exmpp_xml:set_cdata(
+    Username_El = erim_xml:set_cdata(
 		    #xmlel{ns = ?NS_LEGACY_AUTH, name = 'username'},
 		    Username),
     Query = #xmlel{
@@ -193,11 +193,11 @@ request_with_user(To, Username, ID) ->
     exmpp_stanza:set_recipient(IQ, To).
 
 %% @spec (Fields_IQ, Username, Password, Resource) -> Password_IQ
-%%     Fields_IQ = exmpp_xml:xmlel()
+%%     Fields_IQ = erim_xml:xmlel()
 %%     Username = string()
 %%     Password = string() | nil()
 %%     Resource = string()
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq/>' to send authentication informations.
 %%
 %% The stanza ID is generated automatically.
@@ -206,12 +206,12 @@ password(Fields_IQ, Username, Password, Resource) ->
     password(Fields_IQ, Username, Password, Resource, auth_id()).
 
 %% @spec (Fields_IQ, Username, Password, Resource, ID) -> Password_IQ
-%%     Fields_IQ = exmpp_xml:xmlel()
+%%     Fields_IQ = erim_xml:xmlel()
 %%     Username = string()
 %%     Password = string() | nil()
 %%     Resource = string()
 %%     ID = string()
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq/>' to send authentication informations.
 
 password(Fields_IQ, Username, Password, Resource, ID) ->
@@ -224,7 +224,7 @@ password(Fields_IQ, Username, Password, Resource, ID) ->
 %%     Username = string()
 %%     Password = string() | nil()
 %%     Resource = string()
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' to send authentication informations.
 %%
 %% The stanza ID is generated automatically.
@@ -237,7 +237,7 @@ password_plain(Username, Password, Resource) ->
 %%     Password = string() | nil()
 %%     Resource = string()
 %%     ID = string()
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' to send authentication informations.
 %%
 %% `Password' is in clear plain text in the stanza.
@@ -245,13 +245,13 @@ password_plain(Username, Password, Resource) ->
 %% For an anonymous authentication, `Password' may be the empty string.
 
 password_plain(Username, Password, Resource, ID) ->
-    Username_El = exmpp_xml:set_cdata(
+    Username_El = erim_xml:set_cdata(
 		    #xmlel{ns = ?NS_LEGACY_AUTH, name = 'username'},
 		    Username),
-    Password_El = exmpp_xml:set_cdata(
+    Password_El = erim_xml:set_cdata(
 		    #xmlel{ns = ?NS_LEGACY_AUTH, name = 'password'},
 		    Password),
-    Resource_El = exmpp_xml:set_cdata(
+    Resource_El = erim_xml:set_cdata(
 		    #xmlel{ns = ?NS_LEGACY_AUTH, name = 'resource'},
 		    Resource),
     Query = #xmlel{
@@ -265,7 +265,7 @@ password_plain(Username, Password, Resource, ID) ->
 %%     Username = string()
 %%     Password = string()
 %%     Resource = string()
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' to send authentication informations.
 %%
 %% The stanza ID is generated automatically.
@@ -278,19 +278,19 @@ password_digest(Username, Password, Resource) ->
 %%     Password = string()
 %%     Resource = string()
 %%     ID = string()
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' to send authentication informations.
 %%
 %% `Password' is encoded as specified in XEP-0078.
 
 password_digest(Username, Password, Resource, ID) ->
-    Username_El = exmpp_xml:set_cdata(
+    Username_El = erim_xml:set_cdata(
 		    #xmlel{ns = ?NS_LEGACY_AUTH, name = 'username'},
 		    Username),
-    Digest_El = exmpp_xml:set_cdata(
+    Digest_El = erim_xml:set_cdata(
 		  #xmlel{ns = ?NS_LEGACY_AUTH, name = 'digest'},
 		  hex(digest(ID, Password))),
-    Resource_El = exmpp_xml:set_cdata(
+    Resource_El = erim_xml:set_cdata(
 		    #xmlel{ns = ?NS_LEGACY_AUTH, name = 'resource'},
 		    Resource),
     Query = #xmlel{
@@ -305,7 +305,7 @@ password_digest(Username, Password, Resource, ID) ->
 %% --------------------------------------------------------------------
 
 %% @spec (Fields_IQ) -> Fields
-%%     Fields_IQ = exmpp_xml:xmlel()
+%%     Fields_IQ = erim_xml:xmlel()
 %%     Fields = [atom()]
 %% @throws {legacy_auth, get_fields, invalid_iq, Fields_IQ} |
 %%         {legacy_auth, get_fields, invalid_field, Field}
@@ -331,7 +331,7 @@ get_fields2([], Fields) ->
     lists:reverse(Fields).
 
 %% @spec (Fields_IQ) -> Auth
-%%     Fields_IQ = exmpp_xml:xmlel()
+%%     Fields_IQ = erim_xml:xmlel()
 %%     Auth = digest | password
 %% @doc Return the prefered authentication method.
 
@@ -342,7 +342,7 @@ get_prefered_auth(IQ) when ?IS_IQ(IQ) ->
     end.
 
 %% @spec (IQ) -> bool()
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %% @doc Tell if the authentication succeeded.
 
 is_success(IQ) when ?IS_IQ(IQ) ->

@@ -101,7 +101,7 @@ normal() ->
 
 %% @spec (Body) -> Message
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a message stanza with a given body.
 %%
 %% The default namespace is `jabber:client'.
@@ -115,7 +115,7 @@ normal(Body) ->
 %% @spec (Subject, Body) -> Message
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a message stanza with given subject and body.
 %%
 %% The default namespace is `jabber:client'.
@@ -128,7 +128,7 @@ normal(Subject, Body) ->
 
 %% @spec (NS) -> Message
 %%     NS = atom() | string()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create an empty message stanza.
 
 -spec make_normal
@@ -140,7 +140,7 @@ make_normal(NS) ->
 %% @spec (NS, Body) -> Message
 %%     NS = atom() | string()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a message stanza with a given body.
 
 -spec make_normal
@@ -153,7 +153,7 @@ make_normal(NS, Body) ->
 %%     NS = atom() | string()
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a message stanza with given subject and body.
 
 -spec make_normal
@@ -163,7 +163,7 @@ make_normal(NS, Subject, Body) ->
     set_body(set_subject(make_normal(NS), Subject), Body).
 
 %% @spec () -> Message
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create an empty chat message stanza.
 %%
 %% The default namespace is `jabber:client'.
@@ -176,7 +176,7 @@ chat() ->
 
 %% @spec (Body) -> Message
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a chat message stanza with a given body.
 %%
 %% The default namespace is `jabber:client'.
@@ -190,7 +190,7 @@ chat(Body) ->
 %% @spec (Subject, Body) -> Message
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a chat message stanza with given subject and body.
 %%
 %% The default namespace is `jabber:client'.
@@ -203,7 +203,7 @@ chat(Subject, Body) ->
 
 %% @spec (NS) -> Message
 %%     NS = atom() | string()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create an empty chat message stanza.
 
 -spec make_chat
@@ -215,7 +215,7 @@ make_chat(NS) ->
 %% @spec (NS, Body) -> Message
 %%     NS = atom() | string()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a chat message stanza with a given body.
 
 -spec make_chat
@@ -228,7 +228,7 @@ make_chat(NS, Body) ->
 %%     NS = atom() | string()
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a chat message stanza with given subject and body.
 
 -spec make_chat
@@ -250,7 +250,7 @@ groupchat() ->
 
 %% @spec (Body) -> Message
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a groupchat message stanza with a given body.
 %%
 %% The default namespace is `jabber:client'.
@@ -264,7 +264,7 @@ groupchat(Body) ->
 %% @spec (Subject, Body) -> Message
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a groupchat message stanza with given subject and body.
 %%
 %% The default namespace is `jabber:client'.
@@ -277,7 +277,7 @@ groupchat(Subject, Body) ->
 
 %% @spec (NS) -> Message
 %%     NS = atom() | string()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create an empty groupchat message stanza.
 
 -spec make_groupchat
@@ -289,7 +289,7 @@ make_groupchat(NS) ->
 %% @spec (NS, Body) -> Message
 %%     NS = atom() | string()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a groupchat message stanza with a given body.
 
 -spec make_groupchat
@@ -302,7 +302,7 @@ make_groupchat(NS, Body) ->
 %%     NS = atom() | string()
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a groupchat message stanza with given subject and body.
 
 -spec make_groupchat
@@ -324,7 +324,7 @@ headline() ->
 
 %% @spec (Body) -> Message
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a headline message stanza with a given body.
 %%
 %% The default namespace is `jabber:client'.
@@ -338,7 +338,7 @@ headline(Body) ->
 %% @spec (Subject, Body) -> Message
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a headline message stanza with given subject and body.
 %%
 %% The default namespace is `jabber:client'.
@@ -351,7 +351,7 @@ headline(Subject, Body) ->
 
 %% @spec (NS) -> Message
 %%     NS = atom() | string()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create an empty headline message stanza.
 
 -spec make_headline
@@ -363,7 +363,7 @@ make_headline(NS) ->
 %% @spec (NS, Body) -> Message
 %%     NS = atom() | string()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a headline message stanza with a given body.
 
 -spec make_headline
@@ -376,7 +376,7 @@ make_headline(NS, Body) ->
 %%     NS = atom() | string()
 %%     Subject = string() | binary()
 %%     Body = string() | binary()
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %% @doc Create a headline message stanza with given subject and body.
 
 -spec make_headline
@@ -386,9 +386,9 @@ make_headline(NS, Subject, Body) ->
     set_body(set_subject(make_headline(NS), Subject), Body).
 
 %% @spec (Message, Error) -> New_Message
-%%     Message = exmpp_xml:xmlel()
-%%     Error = exmpp_xml:xmlel() | atom()
-%%     New_Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
+%%     Error = erim_xml:xmlel() | atom()
+%%     New_Message = erim_xml:xmlel()
 %% @doc Prepare a message stanza to notify an error.
 %%
 %% If `Error' is an atom, it must be a standard condition defined by
@@ -408,7 +408,7 @@ error(Message, Error) when ?IS_MESSAGE(Message) ->
 %% --------------------------------------------------------------------
 
 %% @spec (El) -> bool
-%%     El = exmpp_xml:xmlel()
+%%     El = erim_xml:xmlel()
 %% @doc Tell if `El' is a message.
 %%
 %% You should probably use the `IS_MESSAGE(El)' guard expression.
@@ -420,7 +420,7 @@ is_message(Message) when ?IS_MESSAGE(Message) -> true;
 is_message(_El)                               -> false.
 
 %% @spec (Message) -> Type
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Type = chat | groupchat | headline | normal | error
 %% @doc Return the type of the given `<message/>'.
 
@@ -438,9 +438,9 @@ get_type(Message) when ?IS_MESSAGE(Message) ->
     end.
 
 %% @spec (Message, Type) -> New_Message
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Type = chat | groupchat | headline | normal | error | binary()
-%%     New_Message = exmpp_xml:xmlel()
+%%     New_Message = erim_xml:xmlel()
 %% @doc Set the type of the given `<message/>'.
 %%
 %% If `Type' isn't a valid, the type is set to `normal'.
@@ -465,7 +465,7 @@ set_type(Message, Type) when ?IS_MESSAGE(Message), is_atom(Type) ->
     exmpp_stanza:set_type(Message, Type_B).
 
 %% @spec (Message) -> Subject | undefined
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Subject = binary()
 %% @doc Return the subject of the message.
 
@@ -473,17 +473,17 @@ set_type(Message, Type) when ?IS_MESSAGE(Message), is_atom(Type) ->
 (xmlel()) -> binary() | undefined.
 
 get_subject(#xmlel{ns = NS} = Message) when ?IS_MESSAGE(Message) ->
-    case exmpp_xml:get_element(Message, NS, 'subject') of
+    case erim_xml:get_element(Message, NS, 'subject') of
         undefined ->
             undefined;
         Subject_El ->
-            exmpp_xml:get_cdata(Subject_El)
+            erim_xml:get_cdata(Subject_El)
     end.
 
 %% @spec (Message, Subject) -> New_Message
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Subject = string() | binary()
-%%     New_Message = exmpp_xml:xmlel()
+%%     New_Message = erim_xml:xmlel()
 %% @doc Set the `<subject/>' field of a message stanza.
 %%
 %% If `Subject' is an empty string (or an empty binary), the previous
@@ -493,21 +493,21 @@ get_subject(#xmlel{ns = NS} = Message) when ?IS_MESSAGE(Message) ->
 (xmlel(), binary() | string()) -> xmlel().
 
 set_subject(#xmlel{ns = NS} = Message, <<>>) when ?IS_MESSAGE(Message) ->
-    exmpp_xml:remove_element(Message, NS, 'subject');
+    erim_xml:remove_element(Message, NS, 'subject');
 set_subject(#xmlel{ns = NS} = Message, "") when ?IS_MESSAGE(Message) ->
-    exmpp_xml:remove_element(Message, NS, 'subject');
+    erim_xml:remove_element(Message, NS, 'subject');
 set_subject(#xmlel{ns = NS} = Message, Subject) when ?IS_MESSAGE(Message) ->
-    New_Subject_El = exmpp_xml:set_cdata(#xmlel{ns = NS, name = 'subject'},
+    New_Subject_El = erim_xml:set_cdata(#xmlel{ns = NS, name = 'subject'},
 					 Subject),
-    case exmpp_xml:get_element(Message, NS, 'subject') of
+    case erim_xml:get_element(Message, NS, 'subject') of
         undefined ->
-            exmpp_xml:append_child(Message, New_Subject_El);
+            erim_xml:append_child(Message, New_Subject_El);
         Subject_El ->
-            exmpp_xml:replace_child(Message, Subject_El, New_Subject_El)
+            erim_xml:replace_child(Message, Subject_El, New_Subject_El)
     end.
 
 %% @spec (Message) -> Body | undefined
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Body = binary()
 %% @doc Return the body of the message.
 
@@ -515,17 +515,17 @@ set_subject(#xmlel{ns = NS} = Message, Subject) when ?IS_MESSAGE(Message) ->
 (xmlel()) -> binary() | undefined.
 
 get_body(#xmlel{ns = NS} = Message) when ?IS_MESSAGE(Message) ->
-    case exmpp_xml:get_element(Message, NS, 'body') of
+    case erim_xml:get_element(Message, NS, 'body') of
         undefined ->
             undefined;
         Body_El ->
-            exmpp_xml:get_cdata(Body_El)
+            erim_xml:get_cdata(Body_El)
     end.
 
 %% @spec (Message, Body) -> New_Message
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Body = string() | binary()
-%%     New_Message = exmpp_xml:xmlel()
+%%     New_Message = erim_xml:xmlel()
 %% @doc Set the `<body/>' field of a message stanza.
 %%
 %% If `Body' is an empty string (or an empty binary), the previous
@@ -535,21 +535,21 @@ get_body(#xmlel{ns = NS} = Message) when ?IS_MESSAGE(Message) ->
 (xmlel(), binary() | string()) -> xmlel().
 
 set_body(#xmlel{ns = NS} = Message, <<>>) when ?IS_MESSAGE(Message) ->
-    exmpp_xml:remove_element(Message, NS, 'body');
+    erim_xml:remove_element(Message, NS, 'body');
 set_body(#xmlel{ns = NS} = Message, "") when ?IS_MESSAGE(Message) ->
-    exmpp_xml:remove_element(Message, NS, 'body');
+    erim_xml:remove_element(Message, NS, 'body');
 set_body(#xmlel{ns = NS} = Message, Body) when ?IS_MESSAGE(Message) ->
-    New_Body_El = exmpp_xml:set_cdata(#xmlel{ns = NS, name = 'body'},
+    New_Body_El = erim_xml:set_cdata(#xmlel{ns = NS, name = 'body'},
 				      Body),
-    case exmpp_xml:get_element(Message, NS, 'body') of
+    case erim_xml:get_element(Message, NS, 'body') of
         undefined ->
-            exmpp_xml:append_child(Message, New_Body_El);
+            erim_xml:append_child(Message, New_Body_El);
         Body_El ->
-            exmpp_xml:replace_child(Message, Body_El, New_Body_El)
+            erim_xml:replace_child(Message, Body_El, New_Body_El)
     end.
 
 %% @spec (Message) -> Thread | undefined
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Thread = binary()
 %% @doc Return the thread of the message.
 
@@ -557,17 +557,17 @@ set_body(#xmlel{ns = NS} = Message, Body) when ?IS_MESSAGE(Message) ->
 (xmlel()) -> binary() | undefined.
 
 get_thread(#xmlel{ns = NS} = Message) when ?IS_MESSAGE(Message) ->
-    case exmpp_xml:get_element(Message, NS, 'thread') of
+    case erim_xml:get_element(Message, NS, 'thread') of
         undefined ->
             undefined;
         Thread_El ->
-            exmpp_xml:get_cdata(Thread_El)
+            erim_xml:get_cdata(Thread_El)
     end.
 
 %% @spec (Message, Thread) -> New_Message
-%%     Message = exmpp_xml:xmlel()
+%%     Message = erim_xml:xmlel()
 %%     Thread = string() | binary()
-%%     New_Message = exmpp_xml:xmlel()
+%%     New_Message = erim_xml:xmlel()
 %% @doc Set the `<thread/>' field of a message stanza.
 %%
 %% If `Thread' is an empty string (or an empty binary), the previous
@@ -577,15 +577,15 @@ get_thread(#xmlel{ns = NS} = Message) when ?IS_MESSAGE(Message) ->
 (xmlel(), binary()) -> xmlel().
 
 set_thread(#xmlel{ns = NS} = Message, <<>>) when ?IS_MESSAGE(Message) ->
-    exmpp_xml:remove_element(Message, NS, 'thread');
+    erim_xml:remove_element(Message, NS, 'thread');
 set_thread(#xmlel{ns = NS} = Message, "") when ?IS_MESSAGE(Message) ->
-    exmpp_xml:remove_element(Message, NS, 'thread');
+    erim_xml:remove_element(Message, NS, 'thread');
 set_thread(#xmlel{ns = NS} = Message, Thread) when ?IS_MESSAGE(Message) ->
-    New_Thread_El = exmpp_xml:set_cdata(#xmlel{ns = NS, name = 'thread'},
+    New_Thread_El = erim_xml:set_cdata(#xmlel{ns = NS, name = 'thread'},
 					Thread),
-    case exmpp_xml:get_element(Message, NS, 'thread') of
+    case erim_xml:get_element(Message, NS, 'thread') of
         undefined ->
-            exmpp_xml:append_child(Message, New_Thread_El);
+            erim_xml:append_child(Message, New_Thread_El);
         Thread_El ->
-            exmpp_xml:replace_child(Message, Thread_El, New_Thread_El)
+            erim_xml:replace_child(Message, Thread_El, New_Thread_El)
     end.

@@ -38,7 +38,7 @@
 %% --------------------------------------------------------------------
 
 %% @spec () -> Feature
-%%     Feature = exmpp_xml:xmlel()
+%%     Feature = erim_xml:xmlel()
 %% @doc Make a feature annoucement child.
 %%
 %% The result should then be passed to {@link exmpp_stream:features/1}.
@@ -53,7 +53,7 @@ feature() ->
 %% --------------------------------------------------------------------
 
 %% @spec (IQ) -> bool()
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %% @doc Tell if the initiating entity wants to establish a session.
 
 want_establishment(IQ) when ?IS_IQ(IQ) ->
@@ -70,8 +70,8 @@ want_establishment(_Stanza) ->
     false.
 
 %% @spec (IQ) -> Result_IQ
-%%     IQ = exmpp_xml:xmlel()
-%%     Result_IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
+%%     Result_IQ = erim_xml:xmlel()
 %% @doc Prepare a result IQ to inform the initiating entity that the
 %% session is created.
 
@@ -79,9 +79,9 @@ establish(IQ) when ?IS_IQ(IQ) ->
     exmpp_iq:result(IQ).
 
 %% @spec (IQ, Condition) -> Error_IQ
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %%     Condition = atom()
-%%     Error_IQ = exmpp_xml:xmlel()
+%%     Error_IQ = erim_xml:xmlel()
 %% @doc Prepare an error reply to `IQ'.
 
 error(IQ, Condition) when ?IS_IQ(IQ) ->

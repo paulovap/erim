@@ -49,8 +49,8 @@
 %% --------------------------------------------------------------------
 
 %% @spec (Request_IQ) -> Fields_IQ
-%%     Request_IQ = exmpp_xml:xmlel()
-%%     Fields_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
+%%     Fields_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' for advertising fields.
 %%
 %% Both authentication methods are proposed.
@@ -59,14 +59,14 @@ fields(Request_IQ) ->
     fields(Request_IQ, both).
 
 %% @spec (Request_IQ, Auth) -> Fields_IQ
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %%     Auth = plain | digest | both
-%%     Fields_IQ = exmpp_xml:xmlel()
+%%     Fields_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' for advertising fields.
 
 fields(Request_IQ, Auth) when ?IS_IQ(Request_IQ) ->
     Path = [ {element, 'query' }, {element, 'username'}, cdata ],
-    Username_Children = case exmpp_xml:get_path(Request_IQ, Path) of
+    Username_Children = case erim_xml:get_path(Request_IQ, Path) of
                    <<>> -> [];
                    Username -> [#xmlcdata{cdata = Username}]
                 end,
@@ -88,17 +88,17 @@ fields(Request_IQ, Auth) when ?IS_IQ(Request_IQ) ->
     exmpp_iq:result(Request_IQ, Query).
 
 %% @spec (Password_IQ) -> Success_IQ
-%%     Password_IQ = exmpp_xml:xmlel()
-%%     Success_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
+%%     Success_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' to notify a successfull authentication.
 
 success(Password_IQ) when ?IS_IQ(Password_IQ) ->
     exmpp_iq:result(Password_IQ).
 
 %% @spec (Password_IQ, Condition) -> Failure_IQ
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %%     Condition = not_authorized | conflict | not_acceptable
-%%     Failure_IQ = exmpp_xml:xmlel()
+%%     Failure_IQ = erim_xml:xmlel()
 %% @doc Make an `<iq>' to notify a successfull authentication.
 
 failure(Password_IQ, Condition) when ?IS_IQ(Password_IQ) ->
@@ -107,7 +107,7 @@ failure(Password_IQ, Condition) when ?IS_IQ(Password_IQ) ->
 	       'conflict'       -> "409";
 	       'not-acceptable' -> "406"
 	   end,
-    Error = exmpp_xml:set_attribute(
+    Error = erim_xml:set_attribute(
 	      exmpp_stanza:error(Password_IQ#xmlel.ns, Condition),
 	      <<"code">>, Code),
     exmpp_iq:error_without_original(Password_IQ, Error).
@@ -117,7 +117,7 @@ failure(Password_IQ, Condition) when ?IS_IQ(Password_IQ) ->
 %% --------------------------------------------------------------------
 
 %% @spec (Request_IQ) -> bool()
-%%     Request_IQ = exmpp_xml:xmlel()
+%%     Request_IQ = erim_xml:xmlel()
 %% @doc Tell if the initiating entity asks for the authentication fields.
 
 want_fields(Request_IQ) when ?IS_IQ(Request_IQ) ->
@@ -134,7 +134,7 @@ want_fields(_Stanza) ->
     false.
 
 %% @spec (Password_IQ) -> Credentials
-%%     Password_IQ = exmpp_xml:xmlel()
+%%     Password_IQ = erim_xml:xmlel()
 %%     Credentials = {Username, Password, Resource}
 %%     Username = string()
 %%     Password = {plain, string()} | {digest, string()}
@@ -156,22 +156,22 @@ get_credentials(Password_IQ) when ?IS_IQ(Password_IQ) ->
 get_credentials2(
   [#xmlel{ns = ?NS_LEGACY_AUTH, name = 'username'} = Field | Rest],
   {_Username, Password, Resource}) ->
-    Username = exmpp_xml:get_cdata_as_list(Field),
+    Username = erim_xml:get_cdata_as_list(Field),
     get_credentials2(Rest, {Username, Password, Resource});
 get_credentials2(
   [#xmlel{ns = ?NS_LEGACY_AUTH, name = 'password'} = Field | Rest],
   {Username, _Password, Resource}) ->
-    Password = exmpp_xml:get_cdata_as_list(Field),
+    Password = erim_xml:get_cdata_as_list(Field),
     get_credentials2(Rest, {Username, {plain, Password}, Resource});
 get_credentials2(
   [#xmlel{ns = ?NS_LEGACY_AUTH, name = 'digest'} = Field | Rest],
   {Username, _Password, Resource}) ->
-    Password = unhex(exmpp_xml:get_cdata_as_list(Field)),
+    Password = unhex(erim_xml:get_cdata_as_list(Field)),
     get_credentials2(Rest, {Username, {digest, Password}, Resource});
 get_credentials2(
   [#xmlel{ns = ?NS_LEGACY_AUTH, name = 'resource'} = Field | Rest],
   {Username, Password, _Resource}) ->
-    Resource = exmpp_xml:get_cdata_as_list(Field),
+    Resource = erim_xml:get_cdata_as_list(Field),
     get_credentials2(Rest, {Username, Password, Resource});
 get_credentials2([Field | _Rest], _Credentials) ->
     throw({legacy_auth, get_credentials, invalid_field, Field});

@@ -26,7 +26,7 @@
 	 set_item/3, set_item/4]).
 
 %% @spec () -> Roster_Iq
-%%     Roster_Iq = exmpp_xml:xmlel()
+%%     Roster_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' to retrieve user roster.
 %%
 %% The stanza `id' is generated automatically.
@@ -35,20 +35,20 @@ get_roster() ->
 
 %% @spec (Id) -> Roster_Iq
 %%     Id = string()
-%%     Roster_Iq = exmpp_xml:xmlel()
+%%     Roster_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' to retrieve user roster.
 get_roster(Id) ->
     Query = #xmlel{ns = ?NS_ROSTER, name = 'query'},
-    Iq = exmpp_xml:set_attributes(
+    Iq = erim_xml:set_attributes(
 	   #xmlel{ns = ?NS_JABBER_CLIENT, name = 'iq'},
 	   [{<<"type">>, "get"}, {<<"id">>, Id}]),
-    exmpp_xml:append_child(Iq, Query).
+    erim_xml:append_child(Iq, Query).
 
 %% @spec (ContactJID, Groups, Nick) -> Roster_Iq
 %%     ContactJID = string()
 %%     Groups = [string()]
 %%     Nick = string()
-%%     Roster_Iq = exmpp_xml:xmlel()
+%%     Roster_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' to update a roster item. This function is used
 %% both to create a roster item and to update an roster entry
 set_item(ContactJID, Groups, Nick) ->
@@ -59,23 +59,23 @@ set_item(ContactJID, Groups, Nick) ->
 %%     ContactJID = string()
 %%     Groups = [string()]
 %%     Nick = string()
-%%     Roster_Iq = exmpp_xml:xmlel()
+%%     Roster_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' to update a roster item. This function is used
 %% both to create a roster item and to update an roster entry
 set_item(Id, ContactJID, Groups, Nick) ->
-    Item = exmpp_xml:set_children(
-		exmpp_xml:set_attributes(
+    Item = erim_xml:set_children(
+		erim_xml:set_attributes(
 		     #xmlel{name = 'item'},
 		     [{<<"name">>, Nick}, {<<"jid">>, ContactJID}]),
-		[ exmpp_xml:set_cdata(
-			exmpp_xml:element(?NS_ROSTER, 'group'),
+		[ erim_xml:set_cdata(
+			erim_xml:element(?NS_ROSTER, 'group'),
 			Gr) || Gr <- Groups]),
     Query = #xmlel{ns = ?NS_ROSTER, name = 'query'},
-    Query2 = exmpp_xml:append_child(Query, Item),
-    Iq = exmpp_xml:set_attributes(
+    Query2 = erim_xml:append_child(Query, Item),
+    Iq = erim_xml:set_attributes(
 	   #xmlel{ns = ?NS_JABBER_CLIENT, name = 'iq'},
 	   [{<<"type">>, "set"}, {<<"id">>, Id}]),
-    exmpp_xml:append_child(Iq, Query2).
+    erim_xml:append_child(Iq, Query2).
 
 %% @spec () -> Roster_ID
 %%     Roster_ID = string()

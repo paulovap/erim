@@ -18,7 +18,7 @@
 %% @doc
 %% The module <strong>{@module}</strong> sends events to a specified
 %% process or function based on elements and trees returned by the
-%% parser `exmpp_xml'.
+%% parser `erim_xml'.
 %%
 %% <p>
 %% It also provides a high-level function to parse an XML document

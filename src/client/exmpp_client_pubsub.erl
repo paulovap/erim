@@ -80,7 +80,7 @@
 
 %% @spec (Service) -> Pubsub_Iq
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving user subscriptions.
 %%
 %% The stanza `id' is generated automatically.
@@ -91,18 +91,18 @@ get_subscriptions(Service) ->
 %% @spec (Id, Service) -> Pubsub_Iq
 %%     Id = string()
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving user subscriptions.
 
 get_subscriptions(Id, Service) ->
     Subscriptions = #xmlel{ns = ?NS_PUBSUB, name = 'subscriptions'},
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Subscriptions]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service) -> Pubsub_Iq
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving user affiliations.
 %%
 %% The stanza `id' is generated automatically.
@@ -113,19 +113,19 @@ get_affiliations(Service) ->
 %% @spec (Id, Service) -> Pubsub_Iq
 %%     Id = string()
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving user affiliations.
 
 get_affiliations(Id, Service) ->
     Affiliations = #xmlel{ns = ?NS_PUBSUB, name = 'affiliations'},
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Affiliations]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating a node on a pubsub service.
 %%
 %% The stanza `id' is generated automatically.
@@ -137,22 +137,22 @@ create_node(Service, Node) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating a node on a pubsub service.
 
 create_node(Id, Service, Node) ->
     %% Make the <create/> element.
-    Create = exmpp_xml:set_attributes(
+    Create = erim_xml:set_attributes(
 	       #xmlel{ns = ?NS_PUBSUB, name = 'create'},
 	       [{<<"node">>, Node}]),
     %% Prepare the final <iq/>.
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Create]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service) -> Pubsub_Iq
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating an instant node on a pubsub service.
 %%
 %% The stanza `id' is generated automatically.
@@ -163,20 +163,20 @@ create_instant_node(Service) ->
 %% @spec (Id, Service) -> Pubsub_Iq
 %%     Id = string()
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating an instant node on a pubsub service.
 
 create_instant_node(Id, Service) ->
     Create = #xmlel{ns = ?NS_PUBSUB, name = 'create'},
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Create]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node, Options) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Options = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Options = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating a node on a pubsub service with configuration.
 %%
 %% The stanza `id' is generated automatically.
@@ -188,27 +188,27 @@ create_and_configure_node(Service, Node, Options) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Options = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Options = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating a node on a pubsub service with configuration.
 
 create_and_configure_node(Id, Service, Node, Options) ->
-    Configure = exmpp_xml:append_child(
+    Configure = erim_xml:append_child(
 	     #xmlel{ns = ?NS_PUBSUB, name = 'configure'},
 	     Options),
-    Create = exmpp_xml:append_child(
-	     exmpp_xml:set_attributes(
+    Create = erim_xml:append_child(
+	     erim_xml:set_attributes(
 	     #xmlel{ns = ?NS_PUBSUB, name = 'create'}, [
 	     {<<"node">>, Node}]),
 	     Configure),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Create]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for deleting a node on a pubsub service.
 %%
 %% The stanza `id' is generated automatically.
@@ -220,24 +220,24 @@ delete_node(Service, Node) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for deleting a node on a pubsub service.
 
 delete_node(Id, Service, Node) ->
     %% Make the <delete/> element.
-    Delete = exmpp_xml:set_attributes(
+    Delete = erim_xml:set_attributes(
 	       #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'delete'},
 	       [{<<"node">>, Node}]),
     %% Prepare the final <iq/>.
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Delete]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (From, Service, Node) -> Pubsub_Iq
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for subscribing to a node on a pubsub service.
 %%
 %% The stanza `id' is generated automatically.
@@ -250,25 +250,25 @@ subscribe(From, Service, Node) ->
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating a node on a pubsub service.
 
 subscribe(Id, From, Service, Node) ->
     %% Make the <subscribe/> element.
-    Subscribe = exmpp_xml:set_attributes(
+    Subscribe = erim_xml:set_attributes(
 		  #xmlel{ns = ?NS_PUBSUB, name = 'subscribe'},
 		  [{<<"node">>, Node},
 		   {<<"jid">>, From}]),
     %% Prepare the final <iq/>.
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Subscribe]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (From, Service, Node) -> Pubsub_Iq
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for unsubscribing from a node on a pubsub service.
 %%
 %% The stanza `id' is generated automatically.
@@ -281,25 +281,25 @@ unsubscribe(From, Service, Node) ->
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for unsubscribing from a node on a pubsub service.
 
 unsubscribe(Id, From, Service, Node) ->
     %% Make the <subscribe/> element.
-    Unsubscribe = exmpp_xml:set_attributes(
+    Unsubscribe = erim_xml:set_attributes(
 		  #xmlel{ns = ?NS_PUBSUB, name = 'unsubscribe'},
 		  [{<<"node">>, Node},
 		   {<<"jid">>, From}]),
     %% Prepare the final <iq/>.
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Unsubscribe]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (From, Service, Node) -> Pubsub_Iq
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving subscriptions options.
 %%
 %% The stanza `id' is generated automatically.
@@ -312,24 +312,24 @@ get_subscriptions_options(From, Service, Node) ->
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving subscriptions options.
 
 get_subscriptions_options(Id, From, Service, Node) ->
-    Options = exmpp_xml:set_attributes(
+    Options = erim_xml:set_attributes(
             #xmlel{ns = ?NS_PUBSUB, name = 'options'},
             [{<<"node">>, Node},
 	     {<<"jid">>, From}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Options]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (From, Service, Node, DataForm) -> Pubsub_Iq
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     DataForm = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     DataForm = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving subscriptions options.
 %%
 %% The stanza `id' is generated automatically.
@@ -342,26 +342,26 @@ set_subscriptions_options(From, Service, Node, DataForm) ->
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     DataForm = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     DataForm = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving subscriptions options.
 
 set_subscriptions_options(Id, From, Service, Node, DataForm) ->
-    Options = exmpp_xml:set_attributes(
+    Options = erim_xml:set_attributes(
             #xmlel{ns = ?NS_PUBSUB, name = 'options',
 	    children = [DataForm]},
 	    [{<<"node">>, Node},
 	     {<<"jid">>, From}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Options]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (From, Service, Node, DataForm) -> Pubsub_Iq
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     DataForm = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     DataForm = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving subscriptions options.
 %%
 %% The stanza `id' is generated automatically.
@@ -374,25 +374,25 @@ subscribe_and_configure(From, Service, Node, DataForm) ->
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     DataForm = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     DataForm = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving subscriptions options.
 
 subscribe_and_configure(Id, From, Service, Node, DataForm) ->
     Options = #xmlel{ns = ?NS_PUBSUB, name = 'options'},
-    Subscribe = exmpp_xml:set_attributes(
+    Subscribe = erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB, name = 'subscribe',
 	    children = [DataForm]},
 	    [{<<"node">>, Node},
 	     {<<"jid">>, From}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Options, Subscribe]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving default configuration options.
 %%
 %% The stanza `id' is generated automatically.
@@ -404,22 +404,22 @@ get_node_configuration(Service, Node) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving default configuration options.
 
 get_node_configuration(Id, Service, Node) ->
-    Configure = exmpp_xml:set_attribute(
+    Configure = erim_xml:set_attribute(
             #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'configure'},
             <<"node">>, Node),
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Configure]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node, Options) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Options = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Options = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for setting configuration options.
 %%
 %% The stanza `id' is generated automatically.
@@ -431,22 +431,22 @@ set_node_configuration(Service, Node, Options) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Options = exmpp_xml:xmlel()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Options = erim_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for setting configuration options.
 
 set_node_configuration(Id, Service, Node, Options) ->
-    Configure = exmpp_xml:append_child(
-	       exmpp_xml:set_attribute(
+    Configure = erim_xml:append_child(
+	       erim_xml:set_attribute(
 	       #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'configure'}, <<"node">>, Node),
 	       Options),
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Configure]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service) -> Pubsub_Iq
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for getting default configuration options.
 %%
 %% The stanza `id' is generated automatically.
@@ -457,19 +457,19 @@ get_default_configuration(Service) ->
 %% @spec (Id, Service) -> Pubsub_Iq
 %%     Id = string()
 %%     Service = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for getting default configuration options.
 
 get_default_configuration(Id, Service) ->
     Default = #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'default'},
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Default]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for purging all items from a pubsub node.
 %%
 %% The stanza `id' is generated automatically.
@@ -481,21 +481,21 @@ purge_items(Service, Node) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for purging all items from a pubsub node.
 
 purge_items(Id, Service, Node) ->
-    Purge = exmpp_xml:set_attributes(
+    Purge = erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'purge'}, [
 	    {<<"node">>, Node}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Purge]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving list of subscriptions.
 %%
 %% The stanza `id' is generated automatically.
@@ -507,16 +507,16 @@ get_owner_subscriptions(Service, Node) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving list of subscriptions.
 
 get_owner_subscriptions(Id, Service, Node) ->
-    Subscriptions = exmpp_xml:set_attributes(
+    Subscriptions = erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'subscriptions'}, [
 	    {<<"node">>, Node}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Subscriptions]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node, Subscribers) -> Pubsub_Iq
 %%     Service = string()
@@ -524,7 +524,7 @@ get_owner_subscriptions(Id, Service, Node) ->
 %%     Subscribers = [{Jid, State}]
 %%     Jid = string()
 %%     State = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for setting list of subscriptions.
 %%
 %% The stanza `id' is generated automatically.
@@ -539,29 +539,29 @@ set_owner_subscriptions(Service, Node, Subscribers) ->
 %%     Subscribers = [{Jid, State}]
 %%     Jid = string()
 %%     State = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for setting list of subscriptions.
 
 set_owner_subscriptions(Id, Service, Node, Subscribers) ->
     SetSubscriptions = fun({Jid, State}) ->
-                           exmpp_xml:set_attributes(
+                           erim_xml:set_attributes(
                            #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'subscription'}, [
                            {<<"jid">>, Jid},
                            {<<"subscription">>, State}])
                        end,
-    Subscriptions = exmpp_xml:append_children(
-	    exmpp_xml:set_attributes(
+    Subscriptions = erim_xml:append_children(
+	    erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'subscriptions'}, [
 	    {<<"node">>, Node}]),
 	    lists:map(SetSubscriptions, Subscribers)),
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Subscriptions]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for getting list of affiliations.
 %%
 %% The stanza `id' is generated automatically.
@@ -573,16 +573,16 @@ get_owner_affiliations(Service, Node) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for getting list of affiliations.
 
 get_owner_affiliations(Id, Service, Node) ->
-    Affiliations = exmpp_xml:set_attributes(
+    Affiliations = erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'affiliations'}, [
 	    {<<"node">>, Node}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Affiliations]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 
 %% @spec (Service, Node, Affiliates) -> Pubsub_Iq
@@ -591,7 +591,7 @@ get_owner_affiliations(Id, Service, Node) ->
 %%     Affiliates = [{Jid, Affiliation}]
 %%     Jid = string()
 %%     Affiliation = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for setting list of affiliations.
 %%
 %% The stanza `id' is generated automatically.
@@ -605,29 +605,29 @@ set_owner_affiliations(Service, Node, Affiliates) ->
 %%     Affiliates = [{Jid, Affiliation}]
 %%     Jid = string()
 %%     Affiliation = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for setting list of affiliations.
 
 set_owner_affiliations(Id, Service, Node, Affiliates) ->
     SetAffiliations = fun({Jid, Affiliation}) ->
-                           exmpp_xml:set_attributes(
+                           erim_xml:set_attributes(
                            #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'affiliation'}, [
                            {<<"jid">>, Jid},
                            {<<"affiliation">>, Affiliation}])
                       end,
-    Affiliations = exmpp_xml:append_children(
-	    exmpp_xml:set_attributes(
+    Affiliations = erim_xml:append_children(
+	    erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB_OWNER, name = 'affiliations'}, [
 	    {<<"node">>, Node}]),
 	    lists:map(SetAffiliations, Affiliates)),
     Pubsub = ?PUBSUB(?NS_PUBSUB_OWNER, [Affiliations]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving pubsub items.
 %%
 %% The stanza `id' is generated automatically.
@@ -639,23 +639,23 @@ get_items(Service, Node) ->
 %%     Id = string()
 %%     Service = string()
 %%     Node = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving pubsub items.
 
 get_items(Id, Service, Node) ->
-    Items = exmpp_xml:set_attribute(
+    Items = erim_xml:set_attribute(
             #xmlel{ns = ?NS_PUBSUB, name = 'items'},
             <<"node">>, Node),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Items]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub). 
+    erim_xml:append_child(Iq, Pubsub). 
 
 %% @spec (Service, Node, ItemsID) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
 %%     ItemsID = [ItemID]
 %%     ItemID = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving pubsub items by id.
 %%
 %% The stanza `id' is generated automatically.
@@ -669,29 +669,29 @@ get_items_by_id(Service, Node, ItemsID) ->
 %%     Node = string()
 %%     ItemsID = [ItemID]
 %%     ItemID = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving pubsub items by id.
 
 get_items_by_id(Id, Service, Node, ItemsID) ->
-    Items = exmpp_xml:set_attribute(
+    Items = erim_xml:set_attribute(
             #xmlel{ns = ?NS_PUBSUB, name = 'items'},
             <<"node">>, Node),
     SetItemsID = fun(ItemID) ->
-                     exmpp_xml:set_attribute(
+                     erim_xml:set_attribute(
                      #xmlel{ns = ?NS_PUBSUB, name = 'item'},
                      <<"id">>, ItemID)
                  end,
-    Items1 = exmpp_xml:append_children(Items,
+    Items1 = erim_xml:append_children(Items,
              lists:map(SetItemsID, ItemsID)),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Items1]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub). 
+    erim_xml:append_child(Iq, Pubsub). 
 
 %% @spec (Service, Node, Max) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
 %%     Max = integer()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving pubsub 'n' items.
 %%
 %% The stanza `id' is generated automatically.
@@ -704,22 +704,22 @@ get_items_max(Service, Node, Max) ->
 %%     Service = string()
 %%     Node = string()
 %%     Max = integer()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for retrieving pubsub 'n' items.
 
 get_items_max(Id, Service, Node, Max) ->
-    Items = exmpp_xml:set_attributes(
+    Items = erim_xml:set_attributes(
             #xmlel{ns = ?NS_PUBSUB, name = 'items'}, [
             {<<"node">>, Node},
             {<<"max_items">>, integer_to_list(Max)}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Items]),
     Iq = ?IQ_GET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Node, Items) -> Pubsub_Iq
 %%     Node = string()
-%%     Items = [exmpp_xml:xmlel() | exmpp_xml:xmlcdata()]
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Items = [erim_xml:xmlel() | erim_xml:xmlcdata()]
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for publishing an item to a node on a pubsub service as PEP (i.e. without 'to' and 'from').
 %%
 %% The stanza `id' is generated automatically.
@@ -727,21 +727,21 @@ get_items_max(Id, Service, Node, Max) ->
 publish(Node, Item_Children) ->
     Item = #xmlel{ns = ?NS_PUBSUB, name = 'item',
 	    children = Item_Children},
-    Publish = exmpp_xml:set_attributes(
+    Publish = erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB, name = 'publish',
 	    children = [Item]}, [
 	    {<<"node">>, Node}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Publish]),
-    Iq = exmpp_xml:set_attributes(
+    Iq = erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_JABBER_CLIENT, name = 'iq'}, [
 	    {<<"type">>, "set"}]),
-    exmpp_xml:append_child(Iq, Pubsub). 
+    erim_xml:append_child(Iq, Pubsub). 
 
 %% @spec (Service, Node, Items) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
-%%     Items = [exmpp_xml:xmlel() | exmpp_xml:xmlcdata()]
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Items = [erim_xml:xmlel() | erim_xml:xmlcdata()]
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for publishing an item to a node on a pubsub service.
 %%
 %% The stanza `id' is generated automatically.
@@ -757,8 +757,8 @@ publish(Service, Node, Item_Children) ->
 %%     From = string()
 %%     Service = string()
 %%     Node = string()
-%%     Items = [exmpp_xml:xmlel() | exmpp_xml:xmlcdata()]
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Items = [erim_xml:xmlel() | erim_xml:xmlcdata()]
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for creating a node on a pubsub service.
 
 publish(Id, Service, Node, Item_Child) when is_tuple(Item_Child) ->
@@ -769,20 +769,20 @@ publish(Id, Service, Node, Item_Children) ->
     Item = #xmlel{ns = ?NS_PUBSUB, name = 'item',
 		  children = Item_Children},
     %% Make the <publish/> element.
-    Publish = exmpp_xml:set_attributes(
+    Publish = erim_xml:set_attributes(
 		#xmlel{ns = ?NS_PUBSUB, name = 'publish',
 		       children = [Item]},
 		[{<<"node">>, Node}]),
     %% Prepare the final <iq/>.
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Publish]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub).
+    erim_xml:append_child(Iq, Pubsub).
 
 %% @spec (Service, Node, ItemID) -> Pubsub_Iq
 %%     Service = string()
 %%     Node = string()
 %%     ItemID = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for deleting a pubsub item.
 %%
 %% The stanza `id' is generated automatically.
@@ -795,20 +795,20 @@ retract(Service, Node, ItemID) ->
 %%     Service = string()
 %%     Node = string()
 %%     ItemID = string()
-%%     Pubsub_Iq = exmpp_xml:xmlel()
+%%     Pubsub_Iq = erim_xml:xmlel()
 %% @doc Make an `<iq>' for deleting a pubsub item.
 
 retract(Id, Service, Node, ItemID) ->
-    Item = exmpp_xml:set_attribute(
+    Item = erim_xml:set_attribute(
 	   #xmlel{ns = ?NS_PUBSUB, name = 'item'},
 	   {<<"id">>, ItemID}),
-    Retract = exmpp_xml:set_attributes(
+    Retract = erim_xml:set_attributes(
 	    #xmlel{ns = ?NS_PUBSUB, name = 'retract',
 	    children = [Item]}, [
 	    {<<"node">>, Node}]),
     Pubsub = ?PUBSUB(?NS_PUBSUB, [Retract]),
     Iq = ?IQ_SET(Service, Id),
-    exmpp_xml:append_child(Iq, Pubsub). 
+    erim_xml:append_child(Iq, Pubsub). 
 
 %% @spec () -> Pubsub_ID
 %%     Pubsub_ID = string()

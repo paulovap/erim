@@ -38,7 +38,7 @@
 %% --------------------------------------------------------------------
 
 %% @spec () -> Feature
-%%     Feature = exmpp_xml:xmlel()
+%%     Feature = erim_xml:xmlel()
 %% @doc Make a feature announcement child.
 %%
 %% The result should then be passed to {@link exmpp_stream:features/1}.
@@ -53,7 +53,7 @@ feature() ->
 %% --------------------------------------------------------------------
 
 %% @spec (IQ) -> Resource | undefined
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %%     Resource = string()
 %% @throws {resource_binding, wished_resource, invalid_bind, IQ}
 %% @doc Return the resource the client wants or `undefined' if he
@@ -64,9 +64,9 @@ wished_resource(IQ) when ?IS_IQ(IQ) ->
         'set' ->
             case exmpp_iq:get_request(IQ) of
                 #xmlel{ns = ?NS_BIND, name = 'bind'} = Bind ->
-                    case exmpp_xml:get_element(Bind, ?NS_BIND, 'resource') of
+                    case erim_xml:get_element(Bind, ?NS_BIND, 'resource') of
                         #xmlel{} = Resource ->
-                            exmpp_xml:get_cdata_as_list(Resource);
+                            erim_xml:get_cdata_as_list(Resource);
                         _ ->
                             undefined
                     end;
@@ -81,9 +81,9 @@ wished_resource(Stanza) ->
     throw({resource_binding, wished_resource, invalid_bind, Stanza}).
 
 %% @spec (IQ, Jid) -> Reply
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %%     Jid = exmpp_jid:jid()
-%%     Reply = exmpp_xml:xmlel()
+%%     Reply = erim_xml:xmlel()
 %% @doc Prepare a reply to `IQ' to inform the client of its final JID.
 
 bind(IQ, Jid) when ?IS_IQ(IQ) ->
@@ -91,7 +91,7 @@ bind(IQ, Jid) when ?IS_IQ(IQ) ->
     El = #xmlel{ns = ?NS_BIND,
 		name = 'jid'
 	       },
-    Children = [exmpp_xml:set_cdata(El, Jid_B)],
+    Children = [erim_xml:set_cdata(El, Jid_B)],
     Bind = #xmlel{ns = ?NS_BIND,
 		  name = 'bind',
 		  children = Children
@@ -99,9 +99,9 @@ bind(IQ, Jid) when ?IS_IQ(IQ) ->
     exmpp_iq:result(IQ, Bind).
 
 %% @spec (IQ, Condition) -> Error_IQ
-%%     IQ = exmpp_xml:xmlel()
+%%     IQ = erim_xml:xmlel()
 %%     Condition = atom()
-%%     Error_IQ = exmpp_xml:xmlel()
+%%     Error_IQ = erim_xml:xmlel()
 %% @doc Prepare an error reply to `IQ'.
 
 error(IQ, Condition) when ?IS_IQ(IQ) ->

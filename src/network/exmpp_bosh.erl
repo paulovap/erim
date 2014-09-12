@@ -200,7 +200,7 @@ code_change(_Old, State, _Extra) ->
 
 
 make_empty_request(Socket, Sid, Rid, Queue, Host, Path) ->
-    StanzasText = [exmpp_xml:document_to_iolist(I) || I <- lists:reverse(Queue)],
+    StanzasText = [erim_xml:document_to_iolist(I) || I <- lists:reverse(Queue)],
     Body = stanzas_msg(Sid, Rid, StanzasText),                                   
     make_request(Socket, Host, Path, Body).                                      
 
@@ -208,7 +208,7 @@ make_raw_request(Socket, Host, Path, Body) ->
     make_request(Socket, Host, Path, Body).  
 
 make_request(Socket, Sid, Rid, Queue, Host, Path, Packet) when is_record(Packet, xmlel) ->
-    StanzasText = [exmpp_xml:document_to_iolist(I) || I <- lists:reverse([Packet|Queue])],
+    StanzasText = [erim_xml:document_to_iolist(I) || I <- lists:reverse([Packet|Queue])],
     Body = stanzas_msg(Sid, Rid, StanzasText),                                                    
     make_request(Socket, Host, Path, Body).                                                       
                                                                                                   
@@ -235,11 +235,11 @@ do_send(#xmlel{ns=?NS_XMPP, name='stream'}, State) ->
     {ok, {{200, <<"OK">>}, _Hdrs, Resp}} = read_response(Socket, nil, nil, [], <<>>),        
     NewState2 = return_socket(NewState, Socket), %%TODO: this can be improved.. don't close the socket and reuse it for latter
 
-    [#xmlel{name=body} = BodyEl] = exmpp_xml:parse_document(Resp),
-    SID = exmpp_xml:get_attribute_as_binary(BodyEl, <<"sid">>, undefined),
-    AuthID = exmpp_xml:get_attribute_as_binary(BodyEl,<<"authid">>,undefined),
-    Requests = list_to_integer(exmpp_xml:get_attribute_as_list(BodyEl,<<"requests">>,undefined)),
-    Events = [{xmlstreamelement, El} || El <- exmpp_xml:get_child_elements(BodyEl)],                                      
+    [#xmlel{name=body} = BodyEl] = erim_xml:parse_document(Resp),
+    SID = erim_xml:get_attribute_as_binary(BodyEl, <<"sid">>, undefined),
+    AuthID = erim_xml:get_attribute_as_binary(BodyEl,<<"authid">>,undefined),
+    Requests = list_to_integer(erim_xml:get_attribute_as_list(BodyEl,<<"requests">>,undefined)),
+    Events = [{xmlstreamelement, El} || El <- erim_xml:get_child_elements(BodyEl)],                                      
 
     % first return a fake stream response, then anything found inside the <body/> element (possibly nothing)
         StreamStart =                                                                                       

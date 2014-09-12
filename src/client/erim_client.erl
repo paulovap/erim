@@ -336,7 +336,7 @@ init_advertisement(Opts, #erim_state{creds={local, Jid}, client=Client, state=CS
     {ok, S}.
 
 send_sock(Sock, Packet) ->
-    Test = exmpp_xml:node_to_binary(Packet, "jabber:client", "http://schemas.ogf.org/occi-xmpp"),
+    Test = erim_xml:node_to_binary(Packet, "jabber:client", "http://schemas.ogf.org/occi-xmpp"),
     lager:info("Packet receive  ~p~n", [Test]),
     gen_tcp:send(Sock, Test).
 
@@ -352,7 +352,7 @@ loop(Sock, State, Jid) ->
     [H | T] = binary:split(Jid, [<<"@">>]),
     case gen_tcp:recv(Sock, 0) of
         {ok, B} ->  lager:debug("Element  ~p~n", [B]),
-                    [B1 | _T] = exmpp_xml:parse_document(B),
+                    [B1 | _T] = erim_xml:parse_document(B),
                     B2 = #received_packet{packet_type=iq, queryns='http://schemas.ogf.org/occi-xmpp', 
                                           from={H, T, <<"">>},
                                           raw_packet= B1},
@@ -366,8 +366,8 @@ loop(Sock, State, Jid) ->
 
 do_recv(Sock, JidL) ->
     case gen_tcp:recv(Sock, 0) of
-        {ok, B} ->  [B1 | _T] = exmpp_xml:parse_document_fragment(B),
-                    Jid = exmpp_xml:get_attribute(B1, <<"from">>, "not found"),
+        {ok, B} ->  [B1 | _T] = erim_xml:parse_document_fragment(B),
+                    Jid = erim_xml:get_attribute(B1, <<"from">>, "not found"),
                     lager:debug("Jid connect ~p~n", [Jid]),
                     NJid = list_to_binary(JidL),
                     EL2 = << <<"<stream:stream xmlns='jabber:client' from='">>/binary, NJid/binary, <<"' to='">>/binary, Jid/binary, <<"' version='1.0'  xmlns:stream='http://etherx.jabber.org/streams'>">>/binary >>,

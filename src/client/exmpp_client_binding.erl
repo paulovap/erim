@@ -41,12 +41,12 @@
 %% --------------------------------------------------------------------
 
 %% @spec (Features_Announcement) -> bool()
-%%     Features_Announcement = exmpp_xml:xmlel()
+%%     Features_Announcement = erim_xml:xmlel()
 %% @throws {resource_binding, announced_support, invalid_feature, Feature}
 %% @doc Tell if the Resource Binding feature is supported.
 
 announced_support(#xmlel{ns = ?NS_XMPP, name = 'features'} = El) ->
-    case exmpp_xml:get_element(El, ?NS_BIND, 'bind') of
+    case erim_xml:get_element(El, ?NS_BIND, 'bind') of
         undefined -> false;
         Child     -> announced_support2(Child)
     end.
@@ -61,14 +61,14 @@ announced_support2(Feature) ->
 %% --------------------------------------------------------------------
 
 %% @spec () -> Bind
-%%     Bind = exmpp_xml:xmlel()
+%%     Bind = erim_xml:xmlel()
 %% @doc Prepare a Resource Binding request.
 
 bind() ->
     bind(undefined).
 
 %% @spec (Resource) -> Bind
-%%     Bind = exmpp_xml:xmlel()
+%%     Bind = erim_xml:xmlel()
 %% @doc Prepare a Resource Binding request for the given `Resource'.
 
 bind(Resource) ->
@@ -82,7 +82,7 @@ bind(Resource) ->
 			 ns = ?NS_BIND,
 			 name = 'resource'
 			},
-		       [exmpp_xml:set_cdata(El, Resource)]
+		       [erim_xml:set_cdata(El, Resource)]
 	       end,
     Bind = #xmlel{
       ns = ?NS_BIND,
@@ -92,7 +92,7 @@ bind(Resource) ->
     exmpp_iq:set(?NS_JABBER_CLIENT, Bind, exmpp_utils:random_id("bind")).
 
 %% @spec (Bind) -> Jid
-%%     Bind = exmpp_xml:xmlel()
+%%     Bind = erim_xml:xmlel()
 %%     Jid = exmpp_jid:jid()
 %% @throws {resource_binding, bounded_jid, invalid_bind, Stanza} |
 %%         {resource_binding, bounded_jid, no_jid, IQ} |
@@ -104,10 +104,10 @@ bounded_jid(IQ) when ?IS_IQ(IQ) ->
         'result' ->
             case exmpp_iq:get_result(IQ) of
                 #xmlel{ns = ?NS_BIND, name = 'bind'} = Bind ->
-                    case exmpp_xml:get_element(Bind,
+                    case erim_xml:get_element(Bind,
 					       ?NS_BIND, 'jid') of
                         #xmlel{} = Jid_El ->
-                            Jid = exmpp_xml:get_cdata(Jid_El),
+                            Jid = erim_xml:get_cdata(Jid_El),
                             exmpp_jid:parse(Jid);
                         _ ->
                             throw({resource_binding, bounded_jid, no_jid, IQ})

@@ -461,7 +461,7 @@ terminate(Reason, _StateName, #state{connection_ref = undefined,
 				     stream_ref = StreamRef,
 				     from_pid=From}) ->
     exmpp_xmlstream:stop(StreamRef),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
     reply(Reason, From),
     ok;
 terminate(Reason, _StateName, #state{connection_ref = ConnRef,
@@ -478,7 +478,7 @@ terminate(Reason, _StateName, #state{connection_ref = ConnRef,
 				     from_pid=From}) ->
     Module:close(ConnRef, ReceiverRef), %stop receiving data from socket
     exmpp_xmlstream:stop(StreamRef),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(StreamRef)),
     reply(Reason, From),
     ok.
 
@@ -611,9 +611,9 @@ wait_for_stream(?stream, State = #state{authenticated = true}) ->
 
 wait_for_stream(Start = ?stream, State = #state{from_pid = From}) ->
     %% Get StreamID
-    StreamId = exmpp_xml:get_attribute_as_list(Start#xmlstreamstart.element, <<"id">>, ""),
+    StreamId = erim_xml:get_attribute_as_list(Start#xmlstreamstart.element, <<"id">>, ""),
     
-    case exmpp_xml:get_attribute_as_list(Start#xmlstreamstart.element, <<"version">>, "") of
+    case erim_xml:get_attribute_as_list(Start#xmlstreamstart.element, <<"version">>, "") of
             "" ->
                 gen_fsm:reply(From, {ok,StreamId}),
                 {next_state, stream_opened, State#state{from_pid=undefined,
@@ -862,7 +862,7 @@ wait_for_sasl_response(#xmlstreamelement{element=#xmlel{name='success'}}, State)
 
 wait_for_sasl_response(#xmlstreamelement{element=#xmlel{name='challenge'} = Element}, State) ->
     #state{connection = Module, connection_ref = ConnRef, sasl_state = SASL_State} = State,
-    Challenge = base64:decode_to_string(exmpp_xml:get_cdata(Element)),
+    Challenge = base64:decode_to_string(erim_xml:get_cdata(Element)),
     case exmpp_sasl_digest:mech_step(SASL_State, Challenge) of
          {error, Reason} ->
               {error, Reason};
@@ -915,7 +915,7 @@ wait_for_legacy_auth_method(?streamerror, State) ->
 %% TODO: We should be able to match on iq type directly on the first
 %% level record
 wait_for_auth_result(?iq_no_attrs, State = #state{from_pid=From, auth_info = Auth}) ->
-    case exmpp_xml:get_attribute_as_binary(IQElement, <<"type">>, undefined) of
+    case erim_xml:get_attribute_as_binary(IQElement, <<"type">>, undefined) of
  	<<"result">> ->
             gen_fsm:reply(From, {ok, get_jid(Auth)}),
             {next_state, logged_in, State#state{from_pid=undefined}, State#state.whitespace_ping};
@@ -930,7 +930,7 @@ wait_for_auth_result(?iq_no_attrs, State = #state{from_pid=From, auth_info = Aut
 %% requirements. Check that a client can get the list of fields and
 %% override this simple method of registration.
 wait_for_register_result(?iq_no_attrs, State = #state{from_pid=From}) ->
-    case exmpp_xml:get_attribute_as_binary(IQElement, <<"type">>, undefined) of
+    case erim_xml:get_attribute_as_binary(IQElement, <<"type">>, undefined) of
  	<<"result">> ->
             gen_fsm:reply(From, ok),
             {next_state, stream_opened, State#state{from_pid=undefined}};
@@ -1091,23 +1091,23 @@ get_jid({JID, _Password}) when ?IS_JID(JID) ->
 %% Start parser and return stream reference
 start_parser() ->
     exmpp_xmlstream:start({gen_fsm, self()},
-                          exmpp_xml:start_parser(?PARSER_OPTIONS),
+                          erim_xml:start_parser(?PARSER_OPTIONS),
                           [{xmlstreamstart,new}]).
 
 %% Authentication functions
 check_auth_method(Method, IQElement) ->
     %% Check auth method if we have the IQ result
-    case exmpp_xml:get_attribute_as_binary(IQElement, <<"type">>, undefined) of
+    case erim_xml:get_attribute_as_binary(IQElement, <<"type">>, undefined) of
 	<<"result">> ->
 	    check_auth_method2(Method, IQElement);
 	_ ->
 	    {error, not_auth_method_result}
     end.
 check_auth_method2(Method, IQElement) ->
-    QueryElement = exmpp_xml:get_element(IQElement,
+    QueryElement = erim_xml:get_element(IQElement,
 					 'jabber:iq:auth',
 					 'query'),
-    case exmpp_xml:get_element(QueryElement,
+    case erim_xml:get_element(QueryElement,
 			       'jabber:iq:auth',
 			       Method) of
 	undefined ->
@@ -1169,31 +1169,31 @@ process_stream_error(ClientPid, Reason) ->
 %% This function uses {@link random:uniform/1}. It's up to the caller to
 %% seed the generator.
 check_id(Attrs) ->
-    case exmpp_xml:get_attribute_from_list_as_binary(Attrs, <<"id">>, <<>>) of
+    case erim_xml:get_attribute_from_list_as_binary(Attrs, <<"id">>, <<>>) of
 	<<>> ->
 	    Id = exmpp_utils:random_id("session"),
-	    {exmpp_xml:set_attribute_in_list(Attrs, <<"id">>, Id), Id};
+	    {erim_xml:set_attribute_in_list(Attrs, <<"id">>, Id), Id};
         Id -> {Attrs, Id}
     end.
 
 %% Try getting a given atribute from a list of xmlattr records
 %% Return default value if attribute is not found
 get_attribute_value(Attrs, Attr, Default) ->
-    exmpp_xml:get_attribute_from_list_as_list(Attrs, Attr, Default).
+    erim_xml:get_attribute_from_list_as_list(Attrs, Attr, Default).
 
 %% Internal operations
 %% send_packet: actually format and send the packet:
 send_packet(ConnRef, Module, ?iqattrs) ->
     {Attrs2, Id} = check_id(Attrs),
     XMLPacket = IQElement#xmlel{attrs=Attrs2},
- %     String = exmpp_xml:document_to_list(XMLPacket),
+ %     String = erim_xml:document_to_list(XMLPacket),
  %     Module:send(ConnRef, String),
     Module:send(ConnRef, XMLPacket),
     Id;
 send_packet(ConnRef, Module, ?elementattrs) ->
     {Attrs2, Id} = check_id(Attrs),
     XMLPacket = Element#xmlel{attrs=Attrs2},
- %     String = exmpp_xml:document_to_list(XMLPacket),
+ %     String = erim_xml:document_to_list(XMLPacket),
  %     Module:send(ConnRef, String),
     Module:send(ConnRef, XMLPacket),
     Id.

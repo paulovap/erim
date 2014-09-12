@@ -41,7 +41,7 @@
 %%     From = exmpp_jid:jid() | string()
 %%     To = exmpp_jid:jid() | string()
 %%     Key = binary() | string()
-%%     Result = exmpp_xml:xmlel()
+%%     Result = erim_xml:xmlel()
 %% @doc Prepare a `<db:result/>' element to send the key to the
 %% Receiving Server.
 
@@ -53,14 +53,14 @@ key(From, To, Key) ->
 		    name = 'result',
 		    attrs = Attrs2
 		   },
-    exmpp_xml:set_cdata(Result, Key).
+    erim_xml:set_cdata(Result, Key).
 
 %% @spec (From, To, ID, Key) -> Request
 %%     From = exmpp_jid:jid() | string()
 %%     To = exmpp_jid:jid() | string()
 %%     ID = binary() | string() | random
 %%     Key = binary() | string()
-%%     Request = exmpp_xml:xmlel()
+%%     Request = erim_xml:xmlel()
 %% @doc Prepare a `<db:verify/>' element to send to the Authoritative
 %% Server.
 
@@ -73,12 +73,12 @@ verify_request(From, To, ID, Key) ->
 		     name = 'verify',
 		     attrs = Attrs3
 		    },
-    exmpp_xml:set_cdata(Request, Key).
+    erim_xml:set_cdata(Request, Key).
 
 %% @spec (Request, Is_Valid) -> Response
-%%     Request = exmpp_xml:xmlel()
+%%     Request = erim_xml:xmlel()
 %%     Is_Valid = bool()
-%%     Response = exmpp_xml:xmlel()
+%%     Response = erim_xml:xmlel()
 %% @doc Prepare a `<db:verify/>' element to answer to the Receiving
 %% Server.
 
@@ -90,8 +90,8 @@ verify_response(Request, Is_Valid) ->
     end.
 
 %% @spec (Result) -> Response
-%%     Result = exmpp_xml:xmlel()
-%%     Response = exmpp_xml:xmlel()
+%%     Result = erim_xml:xmlel()
+%%     Response = erim_xml:xmlel()
 %% @doc Prepare a `<db:result/>' element to answer to the Originating
 %% Server.
 
@@ -102,7 +102,7 @@ validate(Result) ->
 %% @spec (From, To) -> Response
 %%     From = exmpp_jid:jid() | string()
 %%     To = exmpp_jid:jid() | string()
-%%     Response = exmpp_xml:xmlel()
+%%     Response = erim_xml:xmlel()
 %% @doc Prepare a `<db:result/>' element to answer to the Originating
 %% Server.
 

@@ -41,13 +41,13 @@
 %% --------------------------------------------------------------------
 
 %% @spec (Features_Announcement) -> Support
-%%     Features_Announcement = exmpp_xml:xmlel()
+%%     Features_Announcement = erim_xml:xmlel()
 %%     Support = none | optional | required
 %% @throws {tls, announced_support, invalid_announcement, El}
 %% @doc Return the kind of TLS negotiation the receiving entity asks for.
 
 announced_support(#xmlel{ns = ?NS_XMPP, name = 'features'} = El) ->
-    case exmpp_xml:get_element(El, ?NS_TLS, 'starttls') of
+    case erim_xml:get_element(El, ?NS_TLS, 'starttls') of
         undefined -> none;
         Child     -> announced_support2(Child)
     end.
@@ -67,7 +67,7 @@ announced_support2(#xmlel{ns = ?NS_TLS, name = 'starttls'} = El) ->
 %% --------------------------------------------------------------------
 
 %% @spec () -> STARTTLS
-%%     STARTTLS = exmpp_xml:xmlel()
+%%     STARTTLS = erim_xml:xmlel()
 %% @doc Make an XML element to tell the receiving entity that we want to
 %% use TLS.
 

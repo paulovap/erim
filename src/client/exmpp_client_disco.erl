@@ -36,7 +36,7 @@
 
 %% @spec (To) -> Iq
 %%     To = string() | jid()
-%%     Iq = exmpp_xml:xmlel()
+%%     Iq = erim_xml:xmlel()
 %% @doc Make an <iq/> for a disco#info
 
 info(#jid{raw=To}) ->
@@ -45,41 +45,41 @@ info(#jid{raw=To}) ->
 info(To) ->
   Query = ?QUERY_INFO,
   Iq = ?IQ_GET(To, iq_id()),
-  exmpp_xml:append_child(Iq, Query).
+  erim_xml:append_child(Iq, Query).
 
 %% @spec (To, Node) -> Iq
 %%     To   = string() | jid()
 %%     Node = string()
-%%     Iq   = exmpp_xml:xmlel()
+%%     Iq   = erim_xml:xmlel()
 %% @doc Make an <iq/> for a disco#info to a node
 
 info(#jid{raw=To}, Node) ->
     info(To, Node);
 info(To, Node) ->
-  Query = exmpp_xml:set_attribute(?QUERY_INFO, <<"node">>, Node),
+  Query = erim_xml:set_attribute(?QUERY_INFO, <<"node">>, Node),
   Iq = ?IQ_GET(To, iq_id()),
-  exmpp_xml:append_child(Iq, Query).
+  erim_xml:append_child(Iq, Query).
 
 %% @spec (To) -> Iq
 %%     To = string()
-%%     Iq = exmpp_xml:xmlel()
+%%     Iq = erim_xml:xmlel()
 %% @doc Make an <iq/> for a disco#items
 
 items(To) ->
   Query = ?QUERY_ITEMS,
   Iq = ?IQ_GET(To, iq_id()),
-  exmpp_xml:append_child(Iq, Query).
+  erim_xml:append_child(Iq, Query).
 
 %% @spec (To, Node) -> Iq
 %%     To   = string()
 %%     Node = string()
-%%     Iq   = exmpp_xml:xmlel()
+%%     Iq   = erim_xml:xmlel()
 %% @doc Make an <iq/> for a disco#items to a node 
 
 items(To, Node) ->
-  Query = exmpp_xml:set_attribute(?QUERY_ITEMS, <<"node">>, Node),
+  Query = erim_xml:set_attribute(?QUERY_ITEMS, <<"node">>, Node),
   Iq = ?IQ_GET(To, iq_id()),
-  exmpp_xml:append_child(Iq, Query).
+  erim_xml:append_child(Iq, Query).
 
 %% @spec () -> Iq_ID
 %%     Iq_ID = string()

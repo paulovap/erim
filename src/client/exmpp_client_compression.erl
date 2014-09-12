@@ -39,14 +39,14 @@
 %% --------------------------------------------------------------------
 
 %% @spec (Features_Announcement) -> Methods
-%%     Features_Announcement = exmpp_xml:xmlel()
+%%     Features_Announcement = erim_xml:xmlel()
 %%     Methods = [string()]
 %% @throws {stream_compression, announced_methods, invalid_feature, Feature} |
 %%         {stream_compression, announced_methods, invalid_method, El}
 %% @doc Return the list of supported compression methods.
 
 announced_methods(#xmlel{ns = ?NS_XMPP, name = 'features'} = El) ->
-    case exmpp_xml:get_element(El, ?NS_COMPRESS_FEAT, 'compression') of
+    case erim_xml:get_element(El, ?NS_COMPRESS_FEAT, 'compression') of
         undefined -> [];
         Methods   -> announced_methods2(Methods)
     end.
@@ -58,7 +58,7 @@ announced_methods2(#xmlel{children = Children}) ->
 
 announced_methods3(
   [#xmlel{ns = ?NS_COMPRESS_FEAT, name = 'method'} = El | Rest], Result) ->
-    case exmpp_xml:get_cdata_as_list(El) of
+    case erim_xml:get_cdata_as_list(El) of
         "" ->
             throw({stream_compression, announced_methods, invalid_method, El});
         Method ->
@@ -75,7 +75,7 @@ announced_methods3([], Result) ->
 
 %% @spec (Method) -> Compress
 %%     Method = string()
-%%     Compress = exmpp_xml:xmlel()
+%%     Compress = erim_xml:xmlel()
 %% @doc Prepare an request to select prefered compression method.
 
 selected_method(Method) ->
@@ -84,5 +84,5 @@ selected_method(Method) ->
 	       },
     #xmlel{ns = ?NS_COMPRESS,
 	   name = 'compress',
-	   children = [exmpp_xml:set_cdata(El, Method)]
+	   children = [erim_xml:set_cdata(El, Method)]
 	  }.

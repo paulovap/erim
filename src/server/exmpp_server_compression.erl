@@ -42,7 +42,7 @@
 
 %% @spec (Methods) -> Feature
 %%     Methods = [string()]
-%%     Feature = exmpp_xml:xmlel()
+%%     Feature = erim_xml:xmlel()
 %% @throws {stream_compression, feature_announcement, invalid_methods_list,
 %%           []} |
 %%         {stream_compression, feature_announcement, invalid_method, Method}
@@ -77,7 +77,7 @@ methods_list2([Method | Rest], Children) ->
 			   name = 'method'
 			  },
             methods_list2(Rest,
-			  Children ++ [exmpp_xml:set_cdata(Child, Method)]);
+			  Children ++ [erim_xml:set_cdata(Child, Method)]);
         false ->
             throw({stream_compression, feature_announcement,
 		   invalid_method, Method})
@@ -96,22 +96,22 @@ standard_conditions() ->
     ].
 
 %% @spec (El) -> Method
-%%     El = exmpp_xml:xmlel()
+%%     El = erim_xml:xmlel()
 %%     Method = string()
 %% @doc Extract the method chosen by the initiating entity.
 
 selected_method(#xmlel{ns = ?NS_COMPRESS, name = 'compress'} = El) ->
-    case exmpp_xml:get_element(El, ?NS_COMPRESS, 'method') of
+    case erim_xml:get_element(El, ?NS_COMPRESS, 'method') of
         undefined ->
             undefined;
         Sub_El ->
-            exmpp_xml:get_cdata(Sub_El)
+            erim_xml:get_cdata(Sub_El)
     end;
 selected_method(El) ->
     throw({stream_compression, selected_method, unexpected_element, El}).
 
 %% @spec () -> Compressed
-%%     Compressed = exmpp_xml:xmlel()
+%%     Compressed = erim_xml:xmlel()
 %% @doc Prepare a `<compressed/>' element.
 
 compressed() ->
@@ -122,7 +122,7 @@ compressed() ->
 
 %% @spec (Condition) -> Failure
 %%     Condition = atom()
-%%     Failure = exmpp_xml:xmlel()
+%%     Failure = erim_xml:xmlel()
 %% @throws {stream_compression, failure, invalid_condition, Condition}
 %% @doc Prepare a `<failure/>' element.
 
