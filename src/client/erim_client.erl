@@ -337,8 +337,10 @@ init_advertisement(Opts, #erim_state{creds={local, Jid}, client=Client, state=CS
 
 send_sock(Sock, Packet) ->
     Test = erim_xml:node_to_binary(Packet, "jabber:client", "http://schemas.ogf.org/occi-xmpp"),
-    lager:info("Packet receive  ~p~n", [Test]),
-    gen_tcp:send(Sock, Test).
+    Ports = erlang:ports(),
+    lager:debug("Port  ~p~n", [Ports]),
+    Sock1 = lists:last(Ports),
+    gen_tcp:send(Sock1, Test).
 
 server(JidL, State) ->
     {ok, LSock} = gen_tcp:listen(5562, [binary, {packet, raw}, 
@@ -346,6 +348,7 @@ server(JidL, State) ->
     {ok, Sock} = gen_tcp:accept(LSock),
     Jid = do_recv(Sock, JidL), 
     State1 = State#erim_state{session=Sock},
+    lager:debug("Sock  ~p~n", [Sock]),
     loop(Sock, State1, Jid).
 
 loop(Sock, State, Jid) ->
@@ -356,8 +359,7 @@ loop(Sock, State, Jid) ->
                     B2 = #received_packet{packet_type=iq, queryns='http://schemas.ogf.org/occi-xmpp', 
                                           from={H, T, <<"">>},
                                           raw_packet= B1},
-                    lager:debug("Received Packet  ~p~n", [B2]),
-                    handle_info(B2, State),                    
+                    handle_info(B2, State),
                     loop(Sock, State, Jid);
         {error, Error} ->
             lager:debug("Error  ~p~n", [Error]),
