@@ -135,7 +135,7 @@ handle_call(_Req, _From, State) ->
 handle_cast({send, #xmlel{}=Packet}, #erim_state{session=Session}=State) ->
     case is_pid(Session) of
         true     -> exmpp_session:send_packet(Session, Packet);
-        _ -> send_sock(Session, Packet)
+        _ -> send_sock(Packet)
     end,
     {noreply, State};
 handle_cast(_Msg, State) ->
@@ -280,7 +280,7 @@ respond(#xmlel{}=Req, #erim_state{session=Session}, Code) ->
     Err = exmpp_iq:error(Req, Code),
     case is_pid(Session) of
         true     -> exmpp_session:send_packet(Session, Err);
-        _ -> send_sock(Session, Err)
+        _ -> send_sock(Err)
     end.
 
 init_session(Opts, #erim_state{creds={Jid, Passwd}}=S) ->
@@ -335,49 +335,49 @@ init_advertisement(Opts, #erim_state{creds={local, Jid}, client=Client, state=CS
     spawn_link(?MODULE, server, [JidL, S]),
     {ok, S}.
 
-send_sock(Sock, Packet) ->
+send_sock(Packet) ->
+    receive 
+        Sock -> Sock1 = Sock
+    end,
     Test = erim_xml:node_to_binary(Packet, "jabber:client", "http://schemas.ogf.org/occi-xmpp"),
-    Ports = erlang:ports(),
-    lager:debug("Port  ~p~n", [Ports]),
-    Sock1 = lists:last(Ports),
     gen_tcp:send(Sock1, Test).
 
 server(JidL, State) ->
     {ok, LSock} = gen_tcp:listen(5562, [binary, {packet, raw}, 
                                         {active, false}, {reuseaddr, true}]),
-    {ok, Sock} = gen_tcp:accept(LSock),
-    Jid = do_recv(Sock, JidL), 
-    State1 = State#erim_state{session=Sock},
-    lager:debug("Sock  ~p~n", [Sock]),
-    loop(Sock, State1, Jid).
+    do_recv(LSock, JidL, State).
 
-loop(Sock, State, Jid) ->
+loop(Sock, State, Jid, LSock) ->
     [H | T] = binary:split(Jid, [<<"@">>]),
     case gen_tcp:recv(Sock, 0) of
-        {ok, B} ->  lager:debug("Element  ~p~n", [B]),
+        {ok, B} ->  
                     [B1 | _T] = erim_xml:parse_document(B),
                     B2 = #received_packet{packet_type=iq, queryns='http://schemas.ogf.org/occi-xmpp', 
                                           from={H, T, <<"">>},
                                           raw_packet= B1},
                     handle_info(B2, State),
-                    loop(Sock, State, Jid);
+                    Pid = whereis(xmpplocal),
+                    Pid ! Sock,
+                    loop(Sock, State, Jid, LSock);
         {error, Error} ->
             lager:debug("Error  ~p~n", [Error]),
-            {ok, <<"error">>}
+            NJid = binary_to_list(Jid),
+            do_recv(LSock, NJid, State)
     end.
 
-do_recv(Sock, JidL) ->
+do_recv(LSock, JidL, State) ->
+    {ok, Sock} = gen_tcp:accept(LSock),
+    State1 = State#erim_state{session=Sock},
     case gen_tcp:recv(Sock, 0) of
         {ok, B} ->  [B1 | _T] = erim_xml:parse_document_fragment(B),
-                    Jid = erim_xml:get_attribute(B1, <<"from">>, "not found"),
-                    lager:debug("Jid connect ~p~n", [Jid]),
+                    Jid = erim_xml:get_attribute(B1, <<"from">>, <<"not found">>),
                     NJid = list_to_binary(JidL),
                     EL2 = << <<"<stream:stream xmlns='jabber:client' from='">>/binary, NJid/binary, <<"' to='">>/binary, Jid/binary, <<"' version='1.0'  xmlns:stream='http://etherx.jabber.org/streams'>">>/binary >>,
-                    lager:debug("Binary ~p~n", [EL2]),
                     gen_tcp:send(Sock, EL2),
-                    Jid;
-        {error, _Error} ->
-            {ok, <<"error">>}
+                    loop(Sock, State1, Jid, LSock);
+        {error, Error} ->
+            lager:debug("Error  ~p~n", [Error]),
+            do_recv(LSock, JidL, State1)
     end.
 
 init_handler(Opts, #erim_state{}=S) ->
