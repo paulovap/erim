@@ -180,25 +180,25 @@ print_group_end(#state{mode = junit} = St, _Id, "", _Count, _Time, _Output) ->
     },
     St#state{parent_state = Parent_St1};
 print_group_end(#state{mode = junit} = St, Id, Desc, _Count, Time, _Output) ->
-    Attrs0 = exmpp_xml:set_attribute_in_list([], 'name', Desc),
-    Attrs1 = exmpp_xml:set_attribute_in_list(Attrs0, 'time',
+    Attrs0 = erim_xml:set_attribute_in_list([], 'name', Desc),
+    Attrs1 = erim_xml:set_attribute_in_list(Attrs0, 'time',
       io_lib:format("~.6f", [Time / 1000])),
-    Attrs2 = exmpp_xml:set_attribute_in_list(Attrs1, 'tests',
+    Attrs2 = erim_xml:set_attribute_in_list(Attrs1, 'tests',
       St#state.succeed + St#state.fail + St#state.abort + St#state.skip),
-    Attrs3 = exmpp_xml:set_attribute_in_list(Attrs2, 'errors',
+    Attrs3 = erim_xml:set_attribute_in_list(Attrs2, 'errors',
       St#state.fail),
-    Attrs4 = exmpp_xml:set_attribute_in_list(Attrs3, 'failures',
+    Attrs4 = erim_xml:set_attribute_in_list(Attrs3, 'failures',
       St#state.abort),
-    Attrs5 = exmpp_xml:set_attribute_in_list(Attrs4, 'skipped',
+    Attrs5 = erim_xml:set_attribute_in_list(Attrs4, 'skipped',
       St#state.skip),
-    Testsuite = exmpp_xml:set_children(
+    Testsuite = erim_xml:set_children(
       #xmlel{name = 'testsuite', attrs = Attrs5},
       lists:reverse(St#state.data)
     ),
     % Write XML file.
     Filename = junit_report_filename(Id, Desc),
-    Content = exmpp_xml:document_to_list(
-      exmpp_xml:indent_document(Testsuite, <<"  ">>)),
+    Content = erim_xml:document_to_list(
+      erim_xml:indent_document(Testsuite, <<"  ">>)),
     file:write_file(Filename, Content),
     St;
 print_group_end(St, _Id, _Desc, _Count, _Time, _Output) ->
@@ -215,25 +215,25 @@ print_build_errors(#state{mode = junit, data = []} = St, _Id, _Desc,
     St;
 print_build_errors(#state{mode = junit} = St, _Id, Desc,
   _Count, Time, _Output) ->
-    Attrs0 = exmpp_xml:set_attribute_in_list([], 'name', "Build errors"),
-    Attrs1 = exmpp_xml:set_attribute_in_list(Attrs0, 'time',
+    Attrs0 = erim_xml:set_attribute_in_list([], 'name', "Build errors"),
+    Attrs1 = erim_xml:set_attribute_in_list(Attrs0, 'time',
       io_lib:format("~.6f", [Time / 1000])),
-    Attrs2 = exmpp_xml:set_attribute_in_list(Attrs1, 'tests',
+    Attrs2 = erim_xml:set_attribute_in_list(Attrs1, 'tests',
       St#state.succeed + St#state.fail + St#state.abort + St#state.skip),
-    Attrs3 = exmpp_xml:set_attribute_in_list(Attrs2, 'errors',
+    Attrs3 = erim_xml:set_attribute_in_list(Attrs2, 'errors',
       St#state.fail),
-    Attrs4 = exmpp_xml:set_attribute_in_list(Attrs3, 'failures',
+    Attrs4 = erim_xml:set_attribute_in_list(Attrs3, 'failures',
       St#state.abort),
-    Attrs5 = exmpp_xml:set_attribute_in_list(Attrs4, 'skipped',
+    Attrs5 = erim_xml:set_attribute_in_list(Attrs4, 'skipped',
       St#state.skip),
-    Testsuite = exmpp_xml:set_children(
+    Testsuite = erim_xml:set_children(
       #xmlel{name = 'testsuite', attrs = Attrs5},
       lists:reverse(St#state.data)
     ),
     % Write XML file.
     Filename = junit_report_filename(build, Desc),
-    Content = exmpp_xml:document_to_list(
-      exmpp_xml:indent_document(Testsuite, <<"  ">>)),
+    Content = erim_xml:document_to_list(
+      erim_xml:indent_document(Testsuite, <<"  ">>)),
     file:write_file(Filename, Content),
     St;
 print_build_errors(St, _Id, _Desc, _Count, _Time, _Output) ->
@@ -244,8 +244,8 @@ print_test_start(St, _Id, _Desc) ->
 
 print_test_success(#state{mode = junit, data = XML} = St, _Id, Desc, Time,
   _Output) ->
-    Attrs0 = exmpp_xml:set_attribute_in_list([], 'name', Desc),
-    Attrs1 = exmpp_xml:set_attribute_in_list(Attrs0, 'time',
+    Attrs0 = erim_xml:set_attribute_in_list([], 'name', Desc),
+    Attrs1 = erim_xml:set_attribute_in_list(Attrs0, 'time',
       io_lib:format("~.6f", [Time / 1000])),
     Testcase = #xmlel{name = 'testcase', attrs = Attrs1},
     New_XML = [Testcase | XML],
@@ -254,10 +254,10 @@ print_test_success(St, _Id, _Desc, _Time, _Output) ->
     St.
 
 print_test_skip(#state{mode = junit, data = XML} = St, _Id, Desc, Reason) ->
-    Attrs0 = exmpp_xml:set_attribute_in_list([], 'name', Desc),
-    Skipped = exmpp_xml:set_cdata(#xmlel{name = 'skipped'},
+    Attrs0 = erim_xml:set_attribute_in_list([], 'name', Desc),
+    Skipped = erim_xml:set_cdata(#xmlel{name = 'skipped'},
       lists:flatten(io_lib:format("~p", [Reason]))),
-    Testcase = exmpp_xml:set_children(
+    Testcase = erim_xml:set_children(
       #xmlel{name = 'testcase', attrs = Attrs0},
       [Skipped]
     ),
@@ -269,12 +269,12 @@ print_test_skip(St, _Id, Desc, Reason) ->
 
 print_test_error(#state{mode = junit, data = XML} = St, _Id, Desc,
   Result, Time, _Output) ->
-    Attrs0 = exmpp_xml:set_attribute_in_list([], 'name', Desc),
-    Attrs1 = exmpp_xml:set_attribute_in_list(Attrs0, 'time',
+    Attrs0 = erim_xml:set_attribute_in_list([], 'name', Desc),
+    Attrs1 = erim_xml:set_attribute_in_list(Attrs0, 'time',
       io_lib:format("~.6f", [Time / 1000])),
-    Error = exmpp_xml:set_cdata(#xmlel{name = 'error'},
+    Error = erim_xml:set_cdata(#xmlel{name = 'error'},
       format_test_error(Result)),
-    Testcase = exmpp_xml:set_children(
+    Testcase = erim_xml:set_children(
       #xmlel{name = 'testcase', attrs = Attrs1},
       [Error]
     ),
@@ -285,10 +285,10 @@ print_test_error(St, _Id, Desc, Result, _Time, _Output) ->
     St.
 
 print_test_abort(#state{mode = junit, data = XML} = St, _Id, Desc, Reason) ->
-    Attrs0 = exmpp_xml:set_attribute_in_list([], 'name', Desc),
-    Failure = exmpp_xml:set_cdata(#xmlel{name = 'failure'},
+    Attrs0 = erim_xml:set_attribute_in_list([], 'name', Desc),
+    Failure = erim_xml:set_cdata(#xmlel{name = 'failure'},
       lists:flatten(io_lib:format("~p", [Reason]))),
-    Testcase = exmpp_xml:set_children(
+    Testcase = erim_xml:set_children(
       #xmlel{name = 'testcase', attrs = Attrs0},
       [Failure]
     ),

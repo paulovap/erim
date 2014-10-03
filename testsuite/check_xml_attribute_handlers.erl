@@ -134,248 +134,248 @@ do_check() ->
 ).
 
 test_get_attribute_node_from_list2() ->
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST1, "xml:lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST2_1, "xml:lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST2_2, "xml:lang"),
       {"xml:lang", "fr"}),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST3_1, "lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST3_2, "lang"),
       {xmlattr, ?NS_XML, undefined, "lang", "fr"}),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST4, "lang"),
       undefined),
     ok.
 
 test_get_attribute_node_from_list3() ->
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST1, ?NS_XML, "lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST3_1, ?NS_XML, "lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST3_2, ?NS_XML, "lang"),
       {xmlattr, ?NS_XML, undefined, "lang", "fr"}),
-    testsuite:is(exmpp_xml:get_attribute_node_from_list(
+    testsuite:is(erim_xml:get_attribute_node_from_list(
         ?ATTRIBUTE_LIST4, ?NS_XML, "lang"),
       undefined),
     ok.
 
 test_get_attribute_node2() ->
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         undefined, "xml:lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT1, "xml:lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT2_1, "xml:lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT2_2, "xml:lang"),
       {"xml:lang", "fr"}),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT3_1, "lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT3_2, "lang"),
       {xmlattr, ?NS_XML, undefined, "lang", "fr"}),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT4, "lang"),
       undefined),
     ok.
 
 test_get_attribute_node3() ->
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         undefined, ?NS_XML, "lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT1, ?NS_XML, "lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT3_1, ?NS_XML, "lang"),
       undefined),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT3_2, ?NS_XML, "lang"),
       {xmlattr, ?NS_XML, undefined, "lang", "fr"}),
-    testsuite:is(exmpp_xml:get_attribute_node(
+    testsuite:is(erim_xml:get_attribute_node(
         ?ELEMENT4, ?NS_XML, "lang"),
       undefined),
     ok.
 
 test_get_attribute_from_list2() ->
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST1, "xml:lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST2_1, "xml:lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST2_2, "xml:lang"),
       "fr"),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST3_1, "lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST3_2, "lang"),
       "fr"),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST4, "lang"),
       ""),
     ok.
 
 test_get_attribute_from_list3() ->
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST1, ?NS_XML, "lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST3_1, ?NS_XML, "lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST3_2, ?NS_XML, "lang"),
       "fr"),
-    testsuite:is(exmpp_xml:get_attribute_from_list(
+    testsuite:is(erim_xml:get_attribute_from_list(
         ?ATTRIBUTE_LIST4, ?NS_XML, "lang"),
       ""),
     ok.
 
 test_get_attribute2() ->
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         undefined, "xml:lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT1, "xml:lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT2_1, "xml:lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT2_2, "xml:lang"),
       "fr"),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT3_1, "lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT3_2, "lang"),
       "fr"),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT4, "lang"),
       ""),
     ok.
 
 test_get_attribute3() ->
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         undefined, ?NS_XML, "lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT1, ?NS_XML, "lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT3_1, ?NS_XML, "lang"),
       ""),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT3_2, ?NS_XML, "lang"),
       "fr"),
-    testsuite:is(exmpp_xml:get_attribute(
+    testsuite:is(erim_xml:get_attribute(
         ?ELEMENT4, ?NS_XML, "lang"),
       ""),
     ok.
 
 test_has_attribute_in_list2() ->
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST1, "xml:lang"), false),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST2_1, "xml:lang"), false),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST2_2, "xml:lang"), true),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST3_1, "lang"), false),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST3_2, "lang"), true),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST4, "lang"), false),
     ok.
 
 test_has_attribute_in_list3() ->
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST1, ?NS_XML, "lang"), false),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST3_1, ?NS_XML, "lang"), false),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST3_2, ?NS_XML, "lang"), true),
-    testsuite:is(exmpp_xml:has_attribute_in_list(
+    testsuite:is(erim_xml:has_attribute_in_list(
         ?ATTRIBUTE_LIST4, ?NS_XML, "lang"), false),
     ok.
 
 test_has_attribute2() ->
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         undefined, "xml:lang"), false),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT1, "xml:lang"), false),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT2_1, "xml:lang"), false),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT2_2, "xml:lang"), true),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT3_1, "lang"), false),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT3_2, "lang"), true),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT4, "lang"), false),
     ok.
 
 test_has_attribute3() ->
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         undefined, ?NS_XML, "lang"), false),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT1, ?NS_XML, "lang"), false),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT3_1, ?NS_XML, "lang"), false),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT3_2, ?NS_XML, "lang"), true),
-    testsuite:is(exmpp_xml:has_attribute(
+    testsuite:is(erim_xml:has_attribute(
         ?ELEMENT4, ?NS_XML, "lang"), false),
     ok.
 
 test_set_attribute_in_list3() ->
-    New1 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST1,
+    New1 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST1,
       "lang", "en"),
     testsuite:is(New1, [
         {xmlattr, undefined, undefined, "lang", "en"}
       ]),
-    New2_1 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST2_1,
+    New2_1 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST2_1,
       "xml:lang", "en"),
     testsuite:is(New2_1, [
         {"version", "1.0"},
         {"xml:lang","en"}
       ]),
-    New2_2 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST2_2,
+    New2_2 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST2_2,
       "xml:lang", "en"),
     testsuite:is(New2_2, [
         {"version", "1.0"},
         {"xml:lang","en"}
       ]),
-    New3_1 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_1,
+    New3_1 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_1,
       "lang", "en"),
     testsuite:is(New3_1, [
         {xmlattr, undefined, undefined, "version", "1.0"},
         {xmlattr, undefined, undefined, "lang", "en"}
       ]),
-    New3_2 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_2,
+    New3_2 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_2,
       "lang", "en"),
     testsuite:is(New3_2, [
         {xmlattr, undefined, undefined, "version", "1.0"},
         {xmlattr, ?NS_XML, undefined, "lang", "en"}
       ]),
-    New4 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST4,
+    New4 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST4,
       "lang", "en"),
     testsuite:is(New4, [
         bad_data,
@@ -384,31 +384,31 @@ test_set_attribute_in_list3() ->
     ok.
 
 test_set_attribute_in_list4() ->
-    New1 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST1,
+    New1 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST1,
       ?NS_XML, "lang", "en"),
     testsuite:is(New1, [
         {xmlattr, ?NS_XML, undefined, "lang", "en"}
       ]),
-    New3_1 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_1,
+    New3_1 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_1,
       ?NS_XML, "lang", "en"),
     testsuite:is(New3_1, [
         {xmlattr, undefined, undefined, "version", "1.0"},
         {xmlattr, ?NS_XML, undefined, "lang", "en"}
       ]),
-    New3_2 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_2,
+    New3_2 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_2,
       ?NS_XML, "lang", "en"),
     testsuite:is(New3_2, [
         {xmlattr, undefined, undefined, "version", "1.0"},
         {xmlattr, ?NS_XML, undefined, "lang", "en"}
       ]),
-    New3_3 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_2,
+    New3_3 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST3_2,
       'some_other_ns', "lang", "en"),
     testsuite:is(New3_3, [
         {xmlattr, undefined, undefined, "version", "1.0"},
         {xmlattr, ?NS_XML, undefined, "lang", "fr"},
         {xmlattr, 'some_other_ns', undefined, "lang", "en"}
       ]),
-    New4 = exmpp_xml:set_attribute_in_list(?ATTRIBUTE_LIST4,
+    New4 = erim_xml:set_attribute_in_list(?ATTRIBUTE_LIST4,
       ?NS_XML, "lang", "en"),
     testsuite:is(New4, [
         bad_data,
@@ -417,14 +417,14 @@ test_set_attribute_in_list4() ->
     ok.
 
 test_set_attribute3() ->
-    New1 = exmpp_xml:set_attribute(?ELEMENT1,
+    New1 = erim_xml:set_attribute(?ELEMENT1,
       "lang", "en"),
     testsuite:is(New1, {xmlel,
         undefined, [], "element", [
           {xmlattr, undefined, undefined, "lang", "en"}
         ], []
       }),
-    New2_1 = exmpp_xml:set_attribute(?ELEMENT2_1,
+    New2_1 = erim_xml:set_attribute(?ELEMENT2_1,
       "xml:lang", "en"),
     testsuite:is(New2_1, {xmlelement,
         "element", [
@@ -432,7 +432,7 @@ test_set_attribute3() ->
           {"xml:lang","en"}
         ], []
       }),
-    New2_2 = exmpp_xml:set_attribute(?ELEMENT2_2,
+    New2_2 = erim_xml:set_attribute(?ELEMENT2_2,
       "xml:lang", "en"),
     testsuite:is(New2_2, {xmlelement,
         "element", [
@@ -440,7 +440,7 @@ test_set_attribute3() ->
           {"xml:lang","en"}
         ], []
       }),
-    New3_1 = exmpp_xml:set_attribute(?ELEMENT3_1,
+    New3_1 = erim_xml:set_attribute(?ELEMENT3_1,
       "lang", "en"),
     testsuite:is(New3_1, {xmlel,
         undefined, [], "element", [
@@ -448,7 +448,7 @@ test_set_attribute3() ->
           {xmlattr, undefined, undefined, "lang", "en"}
         ], []
       }),
-    New3_2 = exmpp_xml:set_attribute(?ELEMENT3_2,
+    New3_2 = erim_xml:set_attribute(?ELEMENT3_2,
       "lang", "en"),
     testsuite:is(New3_2, {xmlel,
         undefined, [], "element", [
@@ -456,7 +456,7 @@ test_set_attribute3() ->
           {xmlattr, ?NS_XML, undefined, "lang", "en"}
         ], []
       }),
-    New4 = exmpp_xml:set_attribute(?ELEMENT4,
+    New4 = erim_xml:set_attribute(?ELEMENT4,
       "lang", "en"),
     testsuite:is(New4, {xmlel,
         undefined, [], "bad_element", [
@@ -467,14 +467,14 @@ test_set_attribute3() ->
     ok.
 
 test_set_attribute4() ->
-    New1 = exmpp_xml:set_attribute(?ELEMENT1,
+    New1 = erim_xml:set_attribute(?ELEMENT1,
       ?NS_XML, "lang", "en"),
     testsuite:is(New1, {xmlel,
         undefined, [], "element", [
           {xmlattr, ?NS_XML, undefined, "lang", "en"}
         ], []
       }),
-    New3_1 = exmpp_xml:set_attribute(?ELEMENT3_1,
+    New3_1 = erim_xml:set_attribute(?ELEMENT3_1,
       ?NS_XML, "lang", "en"),
     testsuite:is(New3_1, {xmlel,
         undefined, [], "element", [
@@ -482,7 +482,7 @@ test_set_attribute4() ->
           {xmlattr, ?NS_XML, undefined, "lang", "en"}
         ], []
       }),
-    New3_2 = exmpp_xml:set_attribute(?ELEMENT3_2,
+    New3_2 = erim_xml:set_attribute(?ELEMENT3_2,
       ?NS_XML, "lang", "en"),
     testsuite:is(New3_2, {xmlel,
         undefined, [], "element", [
@@ -490,7 +490,7 @@ test_set_attribute4() ->
           {xmlattr, ?NS_XML, undefined, "lang", "en"}
         ], []
       }),
-    New3_3 = exmpp_xml:set_attribute(?ELEMENT3_2,
+    New3_3 = erim_xml:set_attribute(?ELEMENT3_2,
       'some_other_ns', "lang", "en"),
     testsuite:is(New3_3, {xmlel,
         undefined, [], "element", [
@@ -499,7 +499,7 @@ test_set_attribute4() ->
           {xmlattr, 'some_other_ns', undefined, "lang", "en"}
         ], []
       }),
-    New4 = exmpp_xml:set_attribute(?ELEMENT4,
+    New4 = erim_xml:set_attribute(?ELEMENT4,
       ?NS_XML, "lang", "en"),
     testsuite:is(New4, {xmlel,
         undefined, [], "bad_element", [
@@ -510,9 +510,9 @@ test_set_attribute4() ->
     ok.
 
 test_set_attributes() ->
-    New1 = exmpp_xml:set_attributes(?ELEMENT1, []),
+    New1 = erim_xml:set_attributes(?ELEMENT1, []),
     testsuite:is(New1, ?ELEMENT1),
-    New3_1 = exmpp_xml:set_attributes(?ELEMENT3_1,
+    New3_1 = erim_xml:set_attributes(?ELEMENT3_1,
       [{"version", "2.0"}, {"lang", "en"}]),
     testsuite:is(New3_1, {xmlel,
         undefined, [], "element", [
@@ -520,7 +520,7 @@ test_set_attributes() ->
           {xmlattr, undefined, undefined, "lang", "en"}
         ], []
       }),
-    New3_2 = exmpp_xml:set_attributes(?ELEMENT3_2,
+    New3_2 = erim_xml:set_attributes(?ELEMENT3_2,
       [{"version", "2.0"}, {"lang", "en"}]),
     testsuite:is(New3_2, {xmlel,
         undefined, [], "element", [
@@ -531,7 +531,7 @@ test_set_attributes() ->
     ok.
 
 test_set_attributes_ns() ->
-    New3_1 = exmpp_xml:set_attributes(?ELEMENT3_1,
+    New3_1 = erim_xml:set_attributes(?ELEMENT3_1,
       [{undefined, "version", "2.0"}, {?NS_XML, "lang", "en"}]),
     testsuite:is(New3_1, {xmlel,
         undefined, [], "element", [
@@ -539,7 +539,7 @@ test_set_attributes_ns() ->
           {xmlattr, ?NS_XML, undefined, "lang", "en"}
         ], []
       }),
-    New3_2 = exmpp_xml:set_attributes(?ELEMENT3_2,
+    New3_2 = erim_xml:set_attributes(?ELEMENT3_2,
       [{undefined, "version", "2.0"}, {?NS_XML, "lang", "en"}]),
     testsuite:is(New3_2, {xmlel,
         undefined, [], "element", [
@@ -550,30 +550,30 @@ test_set_attributes_ns() ->
     ok.
 
 test_remove_attribute_from_list2() ->
-    New1 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST1,
+    New1 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST1,
       "lang"),
     testsuite:is(New1, []),
-    New2_1 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST2_1,
+    New2_1 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST2_1,
       "xml:lang"),
     testsuite:is(New2_1, [
         {"version", "1.0"}
       ]),
-    New2_2 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST2_2,
+    New2_2 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST2_2,
       "xml:lang"),
     testsuite:is(New2_2, [
         {"version", "1.0"}
       ]),
-    New3_1 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_1,
+    New3_1 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_1,
       "lang"),
     testsuite:is(New3_1, [
         {xmlattr, undefined, undefined, "version", "1.0"}
       ]),
-    New3_2 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_2,
+    New3_2 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_2,
       "lang"),
     testsuite:is(New3_2, [
         {xmlattr, undefined, undefined, "version", "1.0"}
       ]),
-    New4 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST4,
+    New4 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST4,
       "lang"),
     testsuite:is(New4, [
         bad_data
@@ -581,26 +581,26 @@ test_remove_attribute_from_list2() ->
     ok.
 
 test_remove_attribute_from_list3() ->
-    New1 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST1,
+    New1 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST1,
       ?NS_XML, "lang"),
     testsuite:is(New1, []),
-    New3_1 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_1,
+    New3_1 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_1,
       ?NS_XML, "lang"),
     testsuite:is(New3_1, [
         {xmlattr, undefined, undefined, "version", "1.0"}
       ]),
-    New3_2 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_2,
+    New3_2 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_2,
       ?NS_XML, "lang"),
     testsuite:is(New3_2, [
         {xmlattr, undefined, undefined, "version", "1.0"}
       ]),
-    New3_3 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_2,
+    New3_3 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST3_2,
       'some_other_ns', "lang"),
     testsuite:is(New3_3, [
         {xmlattr, undefined, undefined, "version", "1.0"},
         {xmlattr, ?NS_XML, undefined, "lang", "fr"}
       ]),
-    New4 = exmpp_xml:remove_attribute_from_list(?ATTRIBUTE_LIST4,
+    New4 = erim_xml:remove_attribute_from_list(?ATTRIBUTE_LIST4,
       ?NS_XML, "lang"),
     testsuite:is(New4, [
         bad_data
@@ -608,41 +608,41 @@ test_remove_attribute_from_list3() ->
     ok.
 
 test_remove_attribute2() ->
-    New1 = exmpp_xml:remove_attribute(?ELEMENT1,
+    New1 = erim_xml:remove_attribute(?ELEMENT1,
       "lang"),
     testsuite:is(New1, {xmlel,
         undefined, [], "element", [
         ], []
       }),
-    New2_1 = exmpp_xml:remove_attribute(?ELEMENT2_1,
+    New2_1 = erim_xml:remove_attribute(?ELEMENT2_1,
       "xml:lang"),
     testsuite:is(New2_1, {xmlelement,
         "element", [
           {"version", "1.0"}
         ], []
       }),
-    New2_2 = exmpp_xml:remove_attribute(?ELEMENT2_2,
+    New2_2 = erim_xml:remove_attribute(?ELEMENT2_2,
       "xml:lang"),
     testsuite:is(New2_2, {xmlelement,
         "element", [
           {"version", "1.0"}
         ], []
       }),
-    New3_1 = exmpp_xml:remove_attribute(?ELEMENT3_1,
+    New3_1 = erim_xml:remove_attribute(?ELEMENT3_1,
       "lang"),
     testsuite:is(New3_1, {xmlel,
         undefined, [], "element", [
           {xmlattr, undefined, undefined, "version", "1.0"}
         ], []
       }),
-    New3_2 = exmpp_xml:remove_attribute(?ELEMENT3_2,
+    New3_2 = erim_xml:remove_attribute(?ELEMENT3_2,
       "lang"),
     testsuite:is(New3_2, {xmlel,
         undefined, [], "element", [
           {xmlattr, undefined, undefined, "version", "1.0"}
         ], []
       }),
-    New4 = exmpp_xml:remove_attribute(?ELEMENT4,
+    New4 = erim_xml:remove_attribute(?ELEMENT4,
       "lang"),
     testsuite:is(New4, {xmlel,
         undefined, [], "bad_element", [
@@ -652,27 +652,27 @@ test_remove_attribute2() ->
     ok.
 
 test_remove_attribute3() ->
-    New1 = exmpp_xml:remove_attribute(?ELEMENT1,
+    New1 = erim_xml:remove_attribute(?ELEMENT1,
       ?NS_XML, "lang"),
     testsuite:is(New1, {xmlel,
         undefined, [], "element", [
         ], []
       }),
-    New3_1 = exmpp_xml:remove_attribute(?ELEMENT3_1,
+    New3_1 = erim_xml:remove_attribute(?ELEMENT3_1,
       ?NS_XML, "lang"),
     testsuite:is(New3_1, {xmlel,
         undefined, [], "element", [
           {xmlattr, undefined, undefined, "version", "1.0"}
         ], []
       }),
-    New3_2 = exmpp_xml:remove_attribute(?ELEMENT3_2,
+    New3_2 = erim_xml:remove_attribute(?ELEMENT3_2,
       ?NS_XML, "lang"),
     testsuite:is(New3_2, {xmlel,
         undefined, [], "element", [
           {xmlattr, undefined, undefined, "version", "1.0"}
         ], []
       }),
-    New3_3 = exmpp_xml:remove_attribute(?ELEMENT3_2,
+    New3_3 = erim_xml:remove_attribute(?ELEMENT3_2,
       'some_other_ns', "lang"),
     testsuite:is(New3_3, {xmlel,
         undefined, [], "element", [
@@ -680,7 +680,7 @@ test_remove_attribute3() ->
           {xmlattr, ?NS_XML, undefined, "lang", "fr"}
         ], []
       }),
-    New4 = exmpp_xml:remove_attribute(?ELEMENT4,
+    New4 = erim_xml:remove_attribute(?ELEMENT4,
       ?NS_XML, "lang"),
     testsuite:is(New4, {xmlel,
         undefined, [], "bad_element", [

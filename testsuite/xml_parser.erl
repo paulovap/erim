@@ -156,7 +156,7 @@
 
 start_stop_test_() ->
     Tests = [
-      ?_assertMatch(ok, exmpp_xml:stop_parser(exmpp_xml:start_parser()))
+      ?_assertMatch(ok, erim_xml:stop_parser(erim_xml:start_parser()))
     ],
     {setup, ?SETUP, ?CLEANUP, Tests}.
 
@@ -164,11 +164,11 @@ unknown_options_test_() ->
     Tests = [
       ?_assertThrow(
         {xml_parser, options, invalid, _Infos},
-        exmpp_xml:start_parser([bad_option])
+        erim_xml:start_parser([bad_option])
       ),
       ?_assertThrow(
         {xml_parser, options, invalid, _Infos},
-        exmpp_xml:parse_document("", [bad_option])
+        erim_xml:parse_document("", [bad_option])
       )
     ],
     {setup, ?SETUP, ?CLEANUP, Tests}.
@@ -177,70 +177,70 @@ options_test_() ->
     Tests = [
       ?_assertMatch(
         ?TREE1_NO_NS,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{engine, expat_legacy}, {names_as_atom, false}])
       ),
       ?_assertMatch(
         ?TREE1_NO_NS_ATOM,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{engine, expat_legacy}])
       ),
       ?_assertMatch(
         ?TREE1_NS,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{names_as_atom, false}])
       ),
       ?_assertMatch(
         ?TREE1_NS_ATOM,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [names_as_atom])
       ),
       ?_assertMatch(
         ?TREE2_NS_CHECK,
-        exmpp_xml:parse_document(?SOURCE2,
+        erim_xml:parse_document(?SOURCE2,
           [names_as_atom, {check_nss, xmpp}])
       ),
       ?_assertMatch(
         ?TREE3_NS_CHECK,
-        exmpp_xml:parse_document(?SOURCE3,
+        erim_xml:parse_document(?SOURCE3,
           [names_as_atom, {check_elems, xmpp}])
       ),
       ?_assertMatch(
         ?TREE4_NS_CHECK,
-        exmpp_xml:parse_document(?SOURCE4,
+        erim_xml:parse_document(?SOURCE4,
           [names_as_atom, {check_attrs, xmpp}])
       ),
       ?_assertMatch(
         ?TREE1_NO_NS,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{engine, expat_legacy}, {names_as_atom, false},
             {max_size, length(?SOURCE1)}])
       ),
       ?_assertMatch(
         ?TREE1_NO_NS,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{engine, expat_legacy}, {names_as_atom, false},
             {max_size, infinity}])
       ),
       ?_assertThrow(
         {xml_parser, parsing, stanza_too_big, undefined},
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{max_size, length(?SOURCE1) - 1}])
       ),
       ?_assertMatch(
         ?TREE1_ROOT_DEPTH,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{engine, expat_legacy}, {names_as_atom, false}, {root_depth, 1}])
       ),
       ?_assertMatch(
         ?TREE1_NS_ROOT_DEPTH,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{names_as_atom, false},
             {root_depth, 1}])
       ),
       ?_assertMatch(
         ?TREE1_NS_END_EL,
-        exmpp_xml:parse_document(?SOURCE1,
+        erim_xml:parse_document(?SOURCE1,
           [{names_as_atom, false},
             {root_depth, 1}, emit_endtag])
       )
@@ -251,21 +251,21 @@ chunk_by_chunk_test_() ->
     Setup = fun() ->
         exmpp:start(),
         error_logger:tty(false),
-        exmpp_xml:start_parser([{names_as_atom, false}])
+        erim_xml:start_parser([{names_as_atom, false}])
     end,
     Cleanup = fun(P) ->
-        exmpp_xml:stop_parser(P),
+        erim_xml:stop_parser(P),
         application:stop(exmpp)
     end,
     Inst = {with, [
         fun(P) ->
-            ?assertMatch(?CHUNK1_TREE, exmpp_xml:parse(P, ?CHUNK1))
+            ?assertMatch(?CHUNK1_TREE, erim_xml:parse(P, ?CHUNK1))
         end,
         fun(P) ->
-            ?assertMatch(?CHUNK2_TREE, exmpp_xml:parse(P, ?CHUNK2))
+            ?assertMatch(?CHUNK2_TREE, erim_xml:parse(P, ?CHUNK2))
         end,
         fun(P) ->
-            ?assertMatch(?CHUNK3_TREE, exmpp_xml:parse(P, ?CHUNK3))
+            ?assertMatch(?CHUNK3_TREE, erim_xml:parse(P, ?CHUNK3))
         end
     ]},
     {setup, Setup, Cleanup, Inst}.
@@ -274,23 +274,23 @@ bad_xml_test_() ->
     Setup = fun() ->
         exmpp:start(),
         error_logger:tty(false),
-        exmpp_xml:start_parser()
+        erim_xml:start_parser()
     end,
     Cleanup = fun(P) ->
-        exmpp_xml:stop_parser(P),
+        erim_xml:stop_parser(P),
         application:stop(exmpp)
     end,
     Inst = {with, [
         fun(P) ->
             ?assertThrow(
               {xml_parser, parsing, parsing_failed, _},
-              exmpp_xml:parse(P, ?BAD_SOURCE1)
+              erim_xml:parse(P, ?BAD_SOURCE1)
             )
         end,
         fun(P) ->
             ?assertThrow(
               {xml_parser, parsing, parsing_failed, _},
-              exmpp_xml:parse_final(P, ?BAD_SOURCE2)
+              erim_xml:parse_final(P, ?BAD_SOURCE2)
             )
         end
     ]},
@@ -305,15 +305,15 @@ empty_uri_test_() ->
     Setup = fun() ->
         exmpp:start(),
         error_logger:tty(false),
-        exmpp_xml:start_parser()
+        erim_xml:start_parser()
     end,
     Cleanup = fun(P) ->
-        exmpp_xml:stop_parser(P),
+        erim_xml:stop_parser(P),
         application:stop(exmpp)
     end,
     Inst = {with, [
         fun(P) ->
-            ?assertMatch(Expected, exmpp_xml:parse(P, String))
+            ?assertMatch(Expected, erim_xml:parse(P, String))
         end
     ]},
     {setup, Setup, Cleanup, Inst}.

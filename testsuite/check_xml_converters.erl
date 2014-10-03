@@ -23,7 +23,7 @@ check() ->
 do_check() ->
     test_escape_using_entities(),
     test_xmlel_to_xmlelement(),
-    case exmpp_xml:internal_escaping_function_name() of
+    case erim_xml:internal_escaping_function_name() of
         escape_using_entities ->
             test_document_to_list_without_namespace(),
             test_document_to_list_with_namespace(),
@@ -201,109 +201,109 @@ do_check() ->
 -define(SOURCE6, "<stream:stream xmlns=\"ns_default\" xmlns:stream=\"ns_stream\" xmlns:other=\"ns_other\"/>").
 
 test_xmlel_to_xmlelement() ->
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE0_NO_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE0_NO_NS),
       ?TREE0_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE0_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE0_NS),
       ?TREE0_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE0_NS_NAA),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE0_NS_NAA),
       ?TREE0_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE1_NO_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE1_NO_NS),
       ?TREE1_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE1_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE1_NS),
       ?TREE1_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE2_NO_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE2_NO_NS),
       ?TREE2_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE2_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE2_NS),
       ?TREE2_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE2_NS_NAA),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE2_NS_NAA),
       ?TREE2_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE4_NO_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE4_NO_NS),
       ?TREE4_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE4_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE4_NS),
       ?TREE4_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE5_NO_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE5_NO_NS),
       ?TREE5_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE5_NS),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE5_NS),
       ?TREE5_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE5_NS_NAA),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE5_NS_NAA),
       ?TREE5_NO_NS),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE5_NS,
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE5_NS,
         ['ns_stream', 'other'], []),
       ?TREE5_NO_NS2),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE5_NS,
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE5_NS,
         [], [{'ns_stream', "stream2"}]),
       ?TREE5_NO_NS3),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE5_NS2),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE5_NS2),
       ?TREE5_NO_NS2),
-    testsuite:is(exmpp_xml:xmlel_to_xmlelement(?TREE5_NS3),
+    testsuite:is(erim_xml:xmlel_to_xmlelement(?TREE5_NS3),
       ?TREE5_NO_NS2),
     ok.
 
 test_document_to_list_without_namespace() ->
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE0_NO_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE0_NO_NS)),
       ?SOURCE0),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE1_NO_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE1_NO_NS)),
       ?SOURCE1),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE2_NO_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE2_NO_NS)),
       ?SOURCE2),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE5_NO_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE5_NO_NS)),
       ?SOURCE5),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE6_NO_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE6_NO_NS)),
       ?SOURCE6),
     ok.
 
 test_document_to_list_with_namespace() ->
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE0_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE0_NS)),
       ?SOURCE0),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE1_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE1_NS)),
       ?SOURCE1),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE2_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE2_NS)),
       ?SOURCE2),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE5_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE5_NS)),
       ?SOURCE5),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE5_NS_NAA)),
+      lists:flatten(erim_xml:document_to_list(?TREE5_NS_NAA)),
       ?SOURCE5),
     testsuite:is(
-      lists:flatten(exmpp_xml:document_to_list(?TREE6_NS)),
+      lists:flatten(erim_xml:document_to_list(?TREE6_NS)),
       ?SOURCE6),
     ok.
 
 test_node_to_list_with_namespace() ->
     testsuite:is(
-      lists:flatten(exmpp_xml:node_to_list(?TREE3_NS,
+      lists:flatten(erim_xml:node_to_list(?TREE3_NS,
           ?TREE3_DEFAULT_NS, ?TREE3_PREFIXED_NS)),
       ?SOURCE3),
     ok.
 
 test_node_to_list_with_namespace2() ->
     testsuite:is(
-      lists:flatten(exmpp_xml:node_to_list(?TREE3_NS,
+      lists:flatten(erim_xml:node_to_list(?TREE3_NS,
           ?TREE3_DEFAULT_NS_2, ?TREE3_PREFIXED_NS_2)),
       ?SOURCE3_2),
     ok.
 
 test_escape_using_entities() ->
-    testsuite:is(exmpp_xml:escape_using_entities("Entities: &<>\"'"),
+    testsuite:is(erim_xml:escape_using_entities("Entities: &<>\"'"),
       "Entities: &amp;&lt;&gt;&quot;&apos;"),
-    testsuite:is(exmpp_xml:escape_using_entities(<<"Entities: &<>\"'">>),
+    testsuite:is(erim_xml:escape_using_entities(<<"Entities: &<>\"'">>),
       <<"Entities: &amp;&lt;&gt;&quot;&apos;">>),
     ok.
 
 test_clear_endtag_tuples() ->
-    testsuite:is(exmpp_xml:clear_endtag_tuples([?TREE5_NO_NS]), []),
-    testsuite:is(exmpp_xml:clear_endtag_tuples(
+    testsuite:is(erim_xml:clear_endtag_tuples([?TREE5_NO_NS]), []),
+    testsuite:is(erim_xml:clear_endtag_tuples(
         [?TREE0_NO_NS, ?TREE5_NO_NS]), [?TREE0_NO_NS]),
-    testsuite:is(exmpp_xml:clear_endtag_tuples([?TREE5_NS]), []),
-    testsuite:is(exmpp_xml:clear_endtag_tuples(
+    testsuite:is(erim_xml:clear_endtag_tuples([?TREE5_NS]), []),
+    testsuite:is(erim_xml:clear_endtag_tuples(
         [?TREE0_NS, ?TREE5_NS]), [?TREE0_NS]),
     ok.

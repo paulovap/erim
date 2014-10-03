@@ -103,11 +103,11 @@ loop(MySession) ->
 
 %% Send the same packet back for each message received
 echo_packet(MySession, Packet) ->
-    From = exmpp_xml:get_attribute(Packet, <<"from">>, <<"unknown">>),
-    To = exmpp_xml:get_attribute(Packet, <<"to">>, <<"unknown">>),
-    TmpPacket = exmpp_xml:set_attribute(Packet, <<"from">>, To),
-    TmpPacket2 = exmpp_xml:set_attribute(TmpPacket, <<"to">>, From),
-    NewPacket = exmpp_xml:remove_attribute(TmpPacket2, <<"id">>),
+    From = erim_xml:get_attribute(Packet, <<"from">>, <<"unknown">>),
+    To = erim_xml:get_attribute(Packet, <<"to">>, <<"unknown">>),
+    TmpPacket = erim_xml:set_attribute(Packet, <<"from">>, To),
+    TmpPacket2 = erim_xml:set_attribute(TmpPacket, <<"to">>, From),
+    NewPacket = erim_xml:remove_attribute(TmpPacket2, <<"id">>),
     exmpp_session:send_packet(MySession, NewPacket).
 
 handle_presence(Session, Packet, _Presence) ->

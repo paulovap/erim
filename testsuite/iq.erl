@@ -167,11 +167,11 @@ is_iq_record_test_() ->
     ].
 
 iq_conversion_test_() ->
-    IQ_2 = exmpp_xml:remove_whitespaces(?IQ_2),
-    IQ_3 = exmpp_xml:remove_whitespaces(?IQ_3),
-    IQ_4 = exmpp_xml:remove_whitespaces(?IQ_4),
-    IQ_5 = exmpp_xml:remove_whitespaces(?IQ_5),
-    IQ_6 = exmpp_xml:remove_whitespaces(?IQ_6),
+    IQ_2 = erim_xml:remove_whitespaces(?IQ_2),
+    IQ_3 = erim_xml:remove_whitespaces(?IQ_3),
+    IQ_4 = erim_xml:remove_whitespaces(?IQ_4),
+    IQ_5 = erim_xml:remove_whitespaces(?IQ_5),
+    IQ_6 = erim_xml:remove_whitespaces(?IQ_6),
     [
       ?_assertMatch(
         ?IQ_REC_2,

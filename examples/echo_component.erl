@@ -65,9 +65,9 @@ loop(XmppCom) ->
 
 %% Send the same packet back for each message received
 echo_packet(XmppCom, Packet) ->
-    From = exmpp_xml:get_attribute(Packet, <<"from">>, <<"unknown">>),
-    To = exmpp_xml:get_attribute(Packet, <<"to">>, <<"service@monet.opengoss.com">>),
-    TmpPacket = exmpp_xml:set_attribute(Packet, <<"from">>, To),
-    TmpPacket2 = exmpp_xml:set_attribute(TmpPacket, <<"to">>, From),
-    NewPacket = exmpp_xml:remove_attribute(TmpPacket2, <<"id">>),
+    From = erim_xml:get_attribute(Packet, <<"from">>, <<"unknown">>),
+    To = erim_xml:get_attribute(Packet, <<"to">>, <<"service@monet.opengoss.com">>),
+    TmpPacket = erim_xml:set_attribute(Packet, <<"from">>, To),
+    TmpPacket2 = erim_xml:set_attribute(TmpPacket, <<"to">>, From),
+    NewPacket = erim_xml:remove_attribute(TmpPacket2, <<"id">>),
     exmpp_component:send_packet(XmppCom, NewPacket).

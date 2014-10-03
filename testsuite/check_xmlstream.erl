@@ -78,26 +78,26 @@ do_check() ->
 test_parse_stream() ->
     S1 = exmpp_xmlstream:start(
       {apply, {?MODULE, test_parse_stream_p1, []}},
-      exmpp_xml:start_parser(),
+      erim_xml:start_parser(),
       [{xmlstreamstart, new}]
     ),
     {ok, S2} = exmpp_xmlstream:parse(S1, ?CHUNK1),
     {ok, S3} = exmpp_xmlstream:parse(S2, ?CHUNK2),
     {ok, S4} = exmpp_xmlstream:parse(S3, ?CHUNK3),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
     exmpp_xmlstream:stop(S4),
     ok.
 
 test_parse_stream_ns() ->
     S1 = exmpp_xmlstream:start(
       {apply, {?MODULE, test_parse_stream_p2, []}},
-      exmpp_xml:start_parser([namespace, name_as_atom]),
+      erim_xml:start_parser([namespace, name_as_atom]),
       [{xmlstreamstart, new}]
     ),
     {ok, S2} = exmpp_xmlstream:parse(S1, ?CHUNK1),
     {ok, S3} = exmpp_xmlstream:parse(S2, ?CHUNK2),
     {ok, S4} = exmpp_xmlstream:parse(S3, ?CHUNK3),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
     exmpp_xmlstream:stop(S4),
     ok.
 
@@ -128,7 +128,7 @@ test_parse_stream_p2(Ret, _Extra) ->
 test_parse_stream_no_callback() ->
     S1 = exmpp_xmlstream:start(
       no_callback,
-      exmpp_xml:start_parser(),
+      erim_xml:start_parser(),
       [{xmlstreamstart, new}]
     ),
     {ok, S2, Ret1} = exmpp_xmlstream:parse(S1, ?CHUNK1),
@@ -137,14 +137,14 @@ test_parse_stream_no_callback() ->
     testsuite:is(Ret2, []),
     {ok, S4, Ret3} = exmpp_xmlstream:parse(S3, ?CHUNK3),
     testsuite:is(Ret3, [?CHUNK_EVENT2, ?CHUNK_EVENT3]),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
     exmpp_xmlstream:stop(S4),
     ok.
 
 test_parse_stream_no_callback_ns() ->
     S1 = exmpp_xmlstream:start(
       no_callback,
-      exmpp_xml:start_parser([namespace, name_as_atom]),
+      erim_xml:start_parser([namespace, name_as_atom]),
       [{xmlstreamstart, new}]
     ),
     {ok, S2, Ret1} = exmpp_xmlstream:parse(S1, ?CHUNK1),
@@ -153,6 +153,6 @@ test_parse_stream_no_callback_ns() ->
     testsuite:is(Ret2, []),
     {ok, S4, Ret3} = exmpp_xmlstream:parse(S3, ?CHUNK3),
     testsuite:is(Ret3, [?CHUNK_NS_EVENT2, ?CHUNK_NS_EVENT3]),
-    exmpp_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
+    erim_xml:stop_parser(exmpp_xmlstream:get_parser(S4)),
     exmpp_xmlstream:stop(S4),
     ok.

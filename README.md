@@ -40,7 +40,7 @@ It is a fork of exmpp from ProcessOne.
 
 ## 2. Build and install
 
-emir uses rebar:
+erim uses rebar:
 
   $ rebar get-deps
   $ rebar compile
