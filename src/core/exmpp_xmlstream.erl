@@ -32,9 +32,8 @@
 %% </ul>
 
 -module(exmpp_xmlstream).
--compile({parse_transform, lager_transform}).
 
--include("exmpp.hrl").
+-include("erim.hrl").
 
 -export([
 	 start/2,
@@ -316,7 +315,7 @@ send_events(#xml_stream{callback = {apply, {M, F, Extra}}} = Stream,
 send_events(#xml_stream{callback = no_callback} = Stream, Events) ->
     {ok, Stream, Events};
 send_events(Stream, [Event | Rest]) ->
-    lager:info("~s:send_event/2: Event: ~p~n", [?MODULE, Event]),
+    ?info("~s:send_event/2: Event: ~p~n", [?MODULE, Event]),
     send_events(Stream, Rest);
 send_events(Stream, []) ->
     {ok, Stream}.
@@ -433,7 +432,7 @@ set_wrapper_tagnames(Stream, TagNames) when is_list(TagNames) ->
 %%
 %% If the callback() doesn't match any of these specifications
 %% (the `Log' case), the event will be logged with
-%% {@link lager:info/2}.
+%% {@link ?info/2}.
 
 %% @type xmlstream().
 %% Handler for the opened stream, initialized with a call to {@link

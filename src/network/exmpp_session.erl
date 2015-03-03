@@ -57,7 +57,6 @@
 %%
 
 -module(exmpp_session).
--compile({parse_transform, lager_transform}).
 
 -behaviour(gen_fsm).
 
@@ -387,7 +386,7 @@ login(Session, Method, Timeout) when is_pid(Session), is_atom(Method) ->
 send_packet(Session, Packet) when is_pid(Session) ->
     case gen_fsm:sync_send_event(Session, {send_packet, Packet}) of
 	Error when is_tuple(Error) -> 
-	    lager:error("send packet failed: ~p~n", [Error]),
+	    ?error("send packet failed: ~p~n", [Error]),
 	    erlang:throw(Error);
         Id -> Id
     end.

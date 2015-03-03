@@ -42,12 +42,11 @@
 %%                                                        | {error, Error :: term()}.
 %%
 -module(erim_client).
--compile({parse_transform, lager_transform}).
 
 -behaviour(gen_server).
 
--include_lib("erim/include/erim.hrl").
--include_lib("erim/include/erim_client.hrl").
+-include("erim.hrl").
+-include("erim_client.hrl").
 
 -define(CORE_CAPS, [?NS_CAPS]).
 
@@ -152,38 +151,38 @@ handle_cast(_Msg, State) ->
 %% @end
 %%--------------------------------------------------------------------
 handle_info(#received_packet{packet_type=presence}=Pkt, State) ->
-    lager:debug("Dispatching presence packet: ~p~n", [Pkt#received_packet.raw_packet]),
+    ?debug("Dispatching presence packet: ~p~n", [Pkt#received_packet.raw_packet]),
     case handle_presence(Pkt, State) of
 	{ok, S2} ->
 	    {noreply, S2};
 	{error, Err} ->
 	    {stop, Err, State};
 	ignore -> 
-	    lager:debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
+	    ?debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
 	    {noreply, State}
     end;
 
 handle_info(#received_packet{packet_type=message}=Pkt, State) ->
-    lager:debug("Dispatching message packet: ~p~n", [Pkt#received_packet.raw_packet]),
+    ?debug("Dispatching message packet: ~p~n", [Pkt#received_packet.raw_packet]),
     case handle_msg(Pkt, State) of
 	{ok, S2} ->
 	    {noreply, S2};
 	{error, Err} ->
 	    {stop, Err, State};
 	ignore -> 
-	    lager:debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
+	    ?debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
 	    {noreply, State}
     end;
 
 handle_info(#received_packet{packet_type=iq, queryns=NS}=Pkt, State) ->
-    lager:debug("Dispatching iq packet: ~p~n", [Pkt#received_packet.raw_packet]),
+    ?debug("Dispatching iq packet: ~p~n", [Pkt#received_packet.raw_packet]),
     case call({iq, NS}, handle_iq, Pkt, State) of
 	{ok, S2} ->
 	    {noreply, S2};
 	{error, Err} ->
 	    {stop, Err, State};
 	ignore ->
-	    lager:debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
+	    ?debug("Packet ignored: ~p~n", [Pkt#received_packet.raw_packet]),
 	    {noreply, State}
     end;
 
@@ -303,7 +302,7 @@ init_auth(#erim_state{session=Session}=S, Opts) ->
 		{ok, S2} -> 
 		    init_presence(get_caps(S2));
 		{error, Err} -> 
-		    lager:error("Error initializing XMPP handlers: ~p~n", [Err]),
+		    ?error("Error initializing XMPP handlers: ~p~n", [Err]),
 		    {stop, Err}
 	    end
     catch throw:Err ->
@@ -311,12 +310,12 @@ init_auth(#erim_state{session=Session}=S, Opts) ->
     end.
 
 init_local(Opts, #erim_state{}=S) ->
-    lager:debug("Starting XMPP client with link-local mode~n", []),
+    ?debug("Starting XMPP client with link-local mode~n", []),
     case init_handler(Opts, S) of
 	{ok, S2} ->
 	    init_advertisement(Opts, get_caps(S2));
 	{error, Err} ->
-	    lager:error("Error initializing XMPP handlers: ~p~n", [Err]),
+	    ?error("Error initializing XMPP handlers: ~p~n", [Err]),
 	    {stop, Err}
     end.	    
 
@@ -331,14 +330,14 @@ init_advertisement(Opts, #erim_state{creds={local, Jid}, client=Client, state=CS
            end,
     Txt = exmpp_presence:get_txt(proplists:get_value(node, Opts, S#erim_state.node),
 				 Jid, Pres, Caps),
-    lager:debug("Advertising ~s: ~p~n", [Name, Txt]),
+    ?debug("Advertising ~s: ~p~n", [Name, Txt]),
     spawn_link(?MODULE, server, [JidL, S]),
     {ok, S}.
 
 send_sock(Packet) ->
-    receive 
-        Sock -> Sock1 = Sock
-    end,
+    Sock1 = receive 
+		Sock -> Sock
+	    end,
     Test = erim_xml:node_to_binary(Packet, "jabber:client", "http://schemas.ogf.org/occi-xmpp"),
     gen_tcp:send(Sock1, Test).
 
@@ -360,7 +359,7 @@ loop(Sock, State, Jid, LSock) ->
                     Pid ! Sock,
                     loop(Sock, State, Jid, LSock);
         {error, Error} ->
-            lager:debug("Error  ~p~n", [Error]),
+            ?debug("Error  ~p~n", [Error]),
             NJid = binary_to_list(Jid),
             do_recv(LSock, NJid, State)
     end.
@@ -376,7 +375,7 @@ do_recv(LSock, JidL, State) ->
                     gen_tcp:send(Sock, EL2),
                     loop(Sock, State1, Jid, LSock);
         {error, Error} ->
-            lager:debug("Error  ~p~n", [Error]),
+            ?debug("Error  ~p~n", [Error]),
             do_recv(LSock, JidL, State1)
     end.
 
@@ -440,7 +439,7 @@ handle_presence(#received_packet{type_attr="subscribe", from=From}=Pkt,
 	    exmpp_session:send_packet(Session, Pkt2),
 	    {ok, S2};
 	{error, Err} ->
-	    lager:error("Error in presence:approve callback: ~p~n", [Err]),
+	    ?error("Error in presence:approve callback: ~p~n", [Err]),
 	    {error, Err}
     end;
 

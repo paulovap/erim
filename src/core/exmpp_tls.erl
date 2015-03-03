@@ -20,7 +20,8 @@
 %% TLS session.
 
 -module(exmpp_tls).
--compile({parse_transform, lager_transform}).
+
+-include("erim_log.hrl").
 
 -behaviour(gen_server).
 
@@ -174,9 +175,9 @@ register_builtin_engine(Name, Driver, Auth_Methods) ->
         register_engine(Name, Driver, Auth_Methods)
     catch
         throw:{port_driver, load, Reason, Driver_Name} ->
-            lager:warning_msg("Failed to load driver \"~s\": ~s~n",
-				     [Driver_Name,
-				      erl_ddll:format_error(Reason)])
+            ?warn("Failed to load driver \"~s\": ~s~n",
+		  [Driver_Name,
+		   erl_ddll:format_error(Reason)])
     end.
 
 %% --------------------------------------------------------------------
@@ -1146,29 +1147,29 @@ handle_call({get_engine, Engine_Name}, _From,
     end;
 
 handle_call(Request, From, State) ->
-    lager:info("~p:handle_call/3:~n- Request: ~p~n- From: ~p~n"
-	       "- State: ~p~n", [?MODULE, Request, From, State]),
+    ?info("~p:handle_call/3:~n- Request: ~p~n- From: ~p~n"
+	  "- State: ~p~n", [?MODULE, Request, From, State]),
     {reply, ok, State}.
 
 %% @hidden
 
 handle_cast(Request, State) ->
-    lager:info("~p:handle_cast/2:~n- Request: ~p~n"
-	       "- State: ~p~n", [?MODULE, Request, State]),
+    ?info("~p:handle_cast/2:~n- Request: ~p~n"
+	  "- State: ~p~n", [?MODULE, Request, State]),
     {noreply, State}.
 
 %% @hidden
 
 handle_info(Info, State) ->
-    lager:info("~p:handle_info/2:~n- Info: ~p~n"
-	       "- State: ~p~n", [?MODULE, Info, State]),
+    ?info("~p:handle_info/2:~n- Info: ~p~n"
+	  "- State: ~p~n", [?MODULE, Info, State]),
     {noreply, State}.
 
 %% @hidden
 
 code_change(Old_Vsn, State, Extra) ->
-    lager:info("~p:code_change/3:~n- Old_Vsn: ~p~n- Extra: ~p~n"
-	       "- State: ~p~n", [?MODULE, Old_Vsn, Extra, State]),
+    ?info("~p:code_change/3:~n- Old_Vsn: ~p~n- Extra: ~p~n"
+	  "- State: ~p~n", [?MODULE, Old_Vsn, Extra, State]),
     {ok, State}.
 
 %% @hidden

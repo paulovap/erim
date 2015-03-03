@@ -24,7 +24,6 @@
 
 
 -module(exmpp_caps).
--compile({parse_transform, lager_transform}).
 
 -include("exmpp.hrl").
 

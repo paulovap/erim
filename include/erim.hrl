@@ -26,6 +26,9 @@
 % Records to represent Caps.
 -include("erim_caps.hrl").
 
+% Logging macros
+-include("erim_log.hrl").
+
 % --------------------------------------------------------------------
 % Records to represent events.
 % --------------------------------------------------------------------

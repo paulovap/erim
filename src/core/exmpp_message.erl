@@ -26,7 +26,6 @@
 
 %% avoid name clash with local error/2 function
 -compile({no_auto_import,[error/2]}).
--compile({parse_transform, lager_transform}).
 
 %% Message creation.
 -export([

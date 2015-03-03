@@ -20,7 +20,6 @@
 %% entity side of Resource Binding.
 
 -module(exmpp_client_binding).
--compile({parse_transform, lager_transform}).
 
 -include("exmpp.hrl").
 

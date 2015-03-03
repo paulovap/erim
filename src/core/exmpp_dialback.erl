@@ -20,7 +20,6 @@
 %% server dialback method.
 
 -module(exmpp_dialback).
--compile({parse_transform, lager_transform}).
 
 -include("exmpp.hrl").
 

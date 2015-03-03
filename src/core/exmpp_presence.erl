@@ -20,7 +20,6 @@
 %% common operations.
 
 -module(exmpp_presence).
--compile({parse_transform, lager_transform}).
 
 -include("erim.hrl").
 -include("erim_client.hrl").

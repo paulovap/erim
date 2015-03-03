@@ -29,7 +29,6 @@
 %% http://bitbucket.org/etc/lhttpc/src/tip/LICENCE
 
 -module(exmpp_bosh).
--compile({parse_transform, lager_transform}).
 
 %-include_lib("exmpp/include/exmpp.hrl").
 -include("exmpp.hrl").
@@ -188,7 +187,7 @@ handle_info({tcp_closed, Socket}, State = #state{open = Open, free = Free}) ->
         end;                                                                    
 
 handle_info(_Info, State) ->
-    lager:error("unknown_info_in_bosh: ~p~n", [_Info]),
+    ?error("unknown_info_in_bosh: ~p~n", [_Info]),
     {stop, _Info, State}.                                      
 terminate(_Reason, #state{open = Open}) when is_list(Open) ->  
     lists:map(fun({Socket, _}) -> gen_tcp:close(Socket) end, Open),

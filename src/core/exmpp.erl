@@ -25,7 +25,8 @@
 %% </p>
 
 -module(exmpp).
--compile({parse_transform, lager_transform}).
+
+-include("erim_log.hrl").
 
 -behaviour(application).
 
@@ -79,9 +80,9 @@ stop(_State) ->
 %% @hidden
 
 config_change(Changed, New, Removed) ->
-    lager:error("Config change:~n"
-		"Changed: ~p~n"
-		"New: ~p~n"
-		"Removed: ~p~n",
-		[Changed, New, Removed]),
+    ?error("Config change:~n"
+	   "Changed: ~p~n"
+	   "New: ~p~n"
+	   "Removed: ~p~n",
+	   [Changed, New, Removed]),
     ok.

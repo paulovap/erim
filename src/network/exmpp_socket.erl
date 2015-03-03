@@ -24,7 +24,8 @@
 %% </p>
 
 -module(exmpp_socket).
--compile({parse_transform, lager_transform}).
+
+-include("erim_log.hrl").
 
 -export([connect/3, send/2, close/2, reset_parser/1, get_property/2,
         compress/1, starttls/2, wping/1
@@ -144,7 +145,7 @@ receiver_loop(ClientPid, ESocket, StreamRef) ->
 	{ssl_closed, Socket} ->
 	    gen_fsm:send_all_state_event(ClientPid, tcp_closed);
 	{ssl_error,Socket,Reason} ->
-	    lager:warning("ssl_error,~p: ~p~n", [Socket,Reason]),
+	    ?warn("ssl_error,~p: ~p~n", [Socket,Reason]),
 	    gen_fsm:send_all_state_event(ClientPid, tcp_closed);
         reset_parser ->
             receiver_loop(ClientPid, ESocket, exmpp_xmlstream:reset(StreamRef))
